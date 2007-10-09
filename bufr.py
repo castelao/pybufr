@@ -138,16 +138,37 @@ for i in range(n_descriptors):
         print descriptors[F][X][Y]
 
 from UserList import UserList
+from UserDict import UserDict
 #import itertools
 
 
-class WalkingList(UserList):
-    #def __init__(self,data=None):
+class level0(UserList):
     def __init__(self):
         UserList.__init__(self)
-	#if data!=None:
-        #    self.data=data
+	return
+
+class WalkingSafeDict(UserDict):
+    def __init__(self,data):
+        self.data=data
+	self.showed=False
+	return
+    def walk(self):
+        if self.showed==False:
+	    self.showed=True
+            return self.data
+	else:
+	    self.showed=False
+	    return
+	
+
+class WalkingList(UserList):
+    #def __init__(self):
+    def __init__(self,data=None):
+        UserList.__init__(self)
+	if data!=None:
+            self.data=data
 	self.i=-1
+	print "Merda: i",self.i
 	return
     def walk(self):
         self.i+=1
@@ -158,14 +179,16 @@ class WalkingList(UserList):
 
 class Descriptor(UserList):
     def __init__(self,F,X,Y):
-        #UserList.__init__(self)
-        self.data=WalkingList()
+        UserList.__init__(self)
+        #self.data=WalkingList()
 	self.i=0
         self.F=F
 	self.X=X
 	self.Y=Y
 	if (F==0):
-	    self.data.append(globals()['descriptorstable'][F][X][Y])
+	    #self.data.append(WalkingList(globals()['descriptorstable'][F][X][Y]))
+	    self.data.append(WalkingSafeDict(globals()['descriptorstable'][F][X][Y]))
+	    #self.data.append((globals()['descriptorstable'][F][X][Y]))
 	if (F==3):
 	    for f,x,y in globals()['descriptorstable'][F][X][Y]:
 	        print f,x,y
@@ -173,15 +196,20 @@ class Descriptor(UserList):
 	return
     def walk(self):
         output=self.data[self.i].walk()
+	#print "output:",output
+	#print "i:",i
 	if (output == None):
 	    self.i+=1
-	    if (x.i<len(self.data)):
+	    if (self.i<len(self.data)):
                 output=self.data[self.i].walk()
             else:
 	        output=None
-	return None
+	return output
 	
-
+# To test:
+# x=Descriptor(3,1,1)
+# x.walk()
+# x.walk()
 	    
 
 class Descriptors:
