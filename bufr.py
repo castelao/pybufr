@@ -47,13 +47,19 @@ def readdescriptor(filename):
 	    descriptors[F][X]={}
         #if Y not in descriptors[F][X]:
 	#    descriptors[F][X]={}
-	descriptors[F][X][Y] = {'name':fields[1],'unit':fields[2],'scale':fields[3],'reference':fields[4],'width':fields[5]}
+	descriptors[F][X][Y] = {'name':fields[1],'unit':fields[2],'scale':fields[3],'reference':fields[4],'bitwidth':fields[5]}
     return descriptors
 
 #descriptors = readdescriptor('table-B.txt')
-descriptors = readdescriptor('/home/castelao/work/projects/BUFR/others/bufr_000340/bufrtables/B0000000000000007000.TXT')
-
-descriptors[3][1][1] = {'name':'WMO block and station number','descriptors':[],'scale':fields[3],'reference':fields[4],'width':fields[5]}
+descriptorstable = readdescriptor('/home/castelao/work/projects/BUFR/others/bufr_000340/bufrtables/B0000000000000007000.TXT')
+descriptorstable[3]={}
+descriptorstable[3][1]={}
+descriptorstable[3][1][1] = [[0,1,1],[0,1,2]]
+descriptorstable[3][1][11] = [[0,4,1],[0,4,2],[0,4,3]]
+descriptorstable[3][1][12] = [[0,4,4],[0,4,5]]
+descriptorstable[3][1][23] = [[0,5,2],[0,6,2]]
+descriptorstable[3][1][25] = [[3,1,23],[0,4,3],[3,1,12]]
+#descriptors[3][1][1] = {'name':'WMO block and station number','descriptors':[],'scale':fields[3],'reference':fields[4],'width':fields[5]}
 # 3 1 1
 # 3 1 11
 # 3 1 12
@@ -66,12 +72,12 @@ descriptors[3][1][1] = {'name':'WMO block and station number','descriptors':[],'
 
 sectiondata={}
 
-sectionindex={'0':	{'BUFR':4, 
-			'totallength':3,
-			'bufredition':1}}
+#sectionindex={'0':	{'BUFR':4, 
+#			'totallength':3,
+#			'bufredition':1}}
 
 # Read section 0
-sec=0
+#sec=0
 sectiondata[0]={}
 
 #sections[0]=content[:0:8]
@@ -105,9 +111,11 @@ sectiondata[1]['second'] = safe_unpack('>i', f.read(1))
 
 # Read section 2
 
-# Nothing to read since the octet 10 of section 1 is 0
-#sec2size = safe_unpack('>i',content[30:33])
-#safe_unpack('>i',content[33:34])
+if (sectiondata[1]['optionalsec'] != 0):
+    print "Atention!!!! Not ready to read the section 2"
+    # Nothing to read since the octet 10 of section 1 is 0
+    #sec2size = safe_unpack('>i',content[30:33])
+    #safe_unpack('>i',content[33:34])
 
 # Read section 3
 sectiondata[3]={}
@@ -115,7 +123,6 @@ sectiondata[3]['sec3size'] = safe_unpack('>i',f.read(3))
 sectiondata[3]['reserved'] = safe_unpack('>i', f.read(1))
 sectiondata[3]['nsubsets'] = safe_unpack('>i', f.read(2))
 sectiondata[3]['xxxx'] = safe_unpack('>i', f.read(1))
-#sectiondata[3][' sec3size = safe_unpack('>i',content[97:100])
 
 n_descriptors = (sectiondata[3]['sec3size']-7)/2
 sectiondata[3]['descriptors']=[]
@@ -129,6 +136,62 @@ for i in range(n_descriptors):
     print F,X,Y
     if F == 0:
         print descriptors[F][X][Y]
+
+from UserList import UserList
+#import itertools
+
+
+class WalkingList(UserList):
+    #def __init__(self,data=None):
+    def __init__(self):
+        UserList.__init__(self)
+	#if data!=None:
+        #    self.data=data
+	self.i=-1
+	return
+    def walk(self):
+        self.i+=1
+	if self.i<len(self):
+	    return self.data[self.i]
+	return 
+
+
+class Descriptor(UserList):
+    def __init__(self,F,X,Y):
+        #UserList.__init__(self)
+        self.data=WalkingList()
+	self.i=0
+        self.F=F
+	self.X=X
+	self.Y=Y
+	if (F==0):
+	    self.data.append(globals()['descriptorstable'][F][X][Y])
+	if (F==3):
+	    for f,x,y in globals()['descriptorstable'][F][X][Y]:
+	        print f,x,y
+	        self.data.append(Descriptor(f,x,y))
+	return
+    def walk(self):
+        output=self.data[self.i].walk()
+	if (output == None):
+	    self.i+=1
+	    if (x.i<len(self.data)):
+                output=self.data[self.i].walk()
+            else:
+	        output=None
+	return None
+	
+
+	    
+
+class Descriptors:
+    def __init__(self,descriptors):
+        self.descriptors=descriptors
+        self.i=-1
+        return
+    def walk(self):
+        self.i+=1
+        return self.descriptors[self.i]
 
 # Read section 4
 sectiondata[4]={}
