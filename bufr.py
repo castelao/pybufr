@@ -117,25 +117,14 @@ if (sectiondata[1]['optionalsec'] != 0):
     #sec2size = safe_unpack('>i',content[30:33])
     #safe_unpack('>i',content[33:34])
 
-# Read section 3
-sectiondata[3]={}
-sectiondata[3]['sec3size'] = safe_unpack('>i',f.read(3))
-sectiondata[3]['reserved'] = safe_unpack('>i', f.read(1))
-sectiondata[3]['nsubsets'] = safe_unpack('>i', f.read(2))
-sectiondata[3]['xxxx'] = safe_unpack('>i', f.read(1))
+# ============================================================================
+# ==== Read section 3
+# ============================================================================
 
-n_descriptors = (sectiondata[3]['sec3size']-7)/2
-sectiondata[3]['descriptors']=[]
-for i in range(n_descriptors):
-    FX = safe_unpack('>i', f.read(1))
-    F = FX/64
-    X = FX%64
-    Y = safe_unpack('>i', f.read(1))
-    #sectiondata[3]['descriptors'].append([FX,F,X,Y])
-    sectiondata[3]['descriptors'].append([F,X,Y])
-    print F,X,Y
-    if F == 0:
-        print descriptors[F][X][Y]
+# Looks like a good first approach, but still needs:
+#    - Think about an array index. I believe is the best way to reference were to store the output data
+#    - Think about a rewind system for the walk. Maybe simply save a copy, of the data when the walk is called, and when the rewind is called, it only overload the copied data.
+#    - Still missing how to deal with the repetitions (class 1).
 
 from UserList import UserList
 from UserDict import UserDict
@@ -147,7 +136,7 @@ class level0(UserList):
         UserList.__init__(self)
 	return
 
-class WalkingSafeDict(UserDict):
+class Descriptor0(UserDict):
     def __init__(self,data):
         self.data=data
 	self.showed=False
@@ -177,22 +166,27 @@ class WalkingList(UserList):
 	return 
 
 
-class Descriptor(UserList):
-    def __init__(self,F,X,Y):
+class Descriptors(UserList):
+    def __init__(self,F=None,X=None,Y=None):
+    #def __init__(self):
         UserList.__init__(self)
         #self.data=WalkingList()
+	if (F != None) & (X != None) & (Y != None):
+	    self.append(F,X,Y)
+        return
+    def append(self,F,X,Y):
 	self.i=0
         self.F=F
 	self.X=X
 	self.Y=Y
 	if (F==0):
 	    #self.data.append(WalkingList(globals()['descriptorstable'][F][X][Y]))
-	    self.data.append(WalkingSafeDict(globals()['descriptorstable'][F][X][Y]))
+	    self.data.append(Descriptor0(globals()['descriptorstable'][F][X][Y]))
 	    #self.data.append((globals()['descriptorstable'][F][X][Y]))
 	if (F==3):
 	    for f,x,y in globals()['descriptorstable'][F][X][Y]:
 	        print f,x,y
-	        self.data.append(Descriptor(f,x,y))
+	        self.data.append(Descriptors(f,x,y))
 	return
     def walk(self):
         output=self.data[self.i].walk()
@@ -212,16 +206,38 @@ class Descriptor(UserList):
 # x.walk()
 	    
 
-class Descriptors:
-    def __init__(self,descriptors):
-        self.descriptors=descriptors
-        self.i=-1
-        return
-    def walk(self):
-        self.i+=1
-        return self.descriptors[self.i]
+#class Descriptors:
+#    def __init__(self,descriptors):
+#        self.descriptors=descriptors
+#        self.i=-1
+#        return
+#    def walk(self):
+#        self.i+=1
+#        return self.descriptors[self.i]
 
-# Read section 4
+
+sectiondata[3]={}
+sectiondata[3]['sec3size'] = safe_unpack('>i',f.read(3))
+sectiondata[3]['reserved'] = safe_unpack('>i', f.read(1))
+sectiondata[3]['nsubsets'] = safe_unpack('>i', f.read(2))
+sectiondata[3]['xxxx'] = safe_unpack('>i', f.read(1))
+
+n_descriptors = (sectiondata[3]['sec3size']-7)/2
+sectiondata[3]['descriptors']=Descriptors()
+for i in range(n_descriptors):
+    FX = safe_unpack('>i', f.read(1))
+    F = FX/64
+    X = FX%64
+    Y = safe_unpack('>i', f.read(1))
+    #sectiondata[3]['descriptors'].append([FX,F,X,Y])
+    sectiondata[3]['descriptors'].append(F,X,Y)
+    print F,X,Y
+    if F == 0:
+        print descriptors[F][X][Y]
+
+# ============================================================================
+# ==== Read section 4
+# ============================================================================
 sectiondata[4]={}
 
 sectiondata[4]['size'] = safe_unpack('>i',f.read(3))
