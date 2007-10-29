@@ -34,7 +34,6 @@ def int2bin(n, count=8):
 def readdescriptor(filename):
     descriptors={}
     f=open(filename)
-
     for line in f:
         #fields = line.split('\t')
         fields=[line[1:7],line[8:72].strip(),line[73:98].strip(),int(line[98:101]),int(line[102:114]),int(line[115:118])]
@@ -131,10 +130,10 @@ from UserDict import UserDict
 #import itertools
 
 
-class level0(UserList):
-    def __init__(self):
-        UserList.__init__(self)
-	return
+#class level0(UserList):
+#    def __init__(self):
+#        UserList.__init__(self)
+#	return
 
 class Descriptor0(UserDict):
     def __init__(self,data):
@@ -149,22 +148,20 @@ class Descriptor0(UserDict):
 	    self.showed=False
 	    return
 	
-
-class WalkingList(UserList):
-    #def __init__(self):
-    def __init__(self,data=None):
-        UserList.__init__(self)
-	if data!=None:
-            self.data=data
-	self.i=-1
-	print "Merda: i",self.i
-	return
-    def walk(self):
-        self.i+=1
-	if self.i<len(self):
-	    return self.data[self.i]
-	return 
-
+#class WalkingList(UserList):
+#    #def __init__(self):
+#    def __init__(self,data=None):
+#        UserList.__init__(self)
+#	if data!=None:
+#            self.data=data
+#	self.i=-1
+#	print "Merda: i",self.i
+#	return
+#    def walk(self):
+#        self.i+=1
+#	if self.i<len(self):
+#	    return self.data[self.i]
+#	return 
 
 class Descriptors(UserList):
     def __init__(self,F=None,X=None,Y=None):
@@ -183,7 +180,18 @@ class Descriptors(UserList):
 	    #self.data.append(WalkingList(globals()['descriptorstable'][F][X][Y]))
 	    self.data.append(Descriptor0(globals()['descriptorstable'][F][X][Y]))
 	    #self.data.append((globals()['descriptorstable'][F][X][Y]))
-	if (F==3):
+        elif (F==1):
+	    # Replicator class
+	    # X is the number of the following fields that should be replicated
+	    # Y if > 0 is the number of repetitions
+	    #   if = 0 means a delayed replicaton, and a class 0 31 should be the following field.
+	    print "Hey!!! F=1!!!"
+	    self.nfields=X
+	    if Y==0:
+	        # Need to read n on the next field
+	    else:
+	        self.n=Y
+	elif (F==3):
 	    for f,x,y in globals()['descriptorstable'][F][X][Y]:
 	        print f,x,y
 	        self.data.append(Descriptors(f,x,y))
@@ -233,7 +241,7 @@ for i in range(n_descriptors):
     sectiondata[3]['descriptors'].append(F,X,Y)
     print F,X,Y
     if F == 0:
-        print descriptors[F][X][Y]
+        print descriptorstable[F][X][Y]
 
 # ============================================================================
 # ==== Read section 4
@@ -243,6 +251,7 @@ sectiondata[4]={}
 sectiondata[4]['size'] = safe_unpack('>i',f.read(3))
 sectiondata[4]['reserved'] = safe_unpack('>i', f.read(1))
 
+# Need to change it. Should read variable by variable.
 #rownbits=8
 bitline=''
 for i in range(sectiondata[4]['size']-4):
@@ -250,8 +259,10 @@ for i in range(sectiondata[4]['size']-4):
 
 sectiondata[4]['data']=[]
 fin=0
-sizes=[7,10,12,4,6,5,6,10,8]
-for s in sizes:
+#sizes=[7,10,12,4,6,5,6,10,8]
+#for s in sizes:
+for i in range(15):
+    s=sectiondata[3]['descriptors'].walk()['bitwidth']
     ini=fin
     fin+=s
     print s,ini,fin,bitline[ini:fin]
