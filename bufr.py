@@ -1,4 +1,4 @@
-filename = '/home/castelao/work/projects/BUFR/others/bufr_000340/data/wmo_sarep.bufr'
+filename = './data/wmo_sarep.bufr'
 f=open(filename,'r')
 #content = f.read()
 #f.close()
@@ -119,6 +119,10 @@ if (sectiondata[1]['optionalsec'] != 0):
 # ============================================================================
 # ==== Read section 3
 # ============================================================================
+#filename = './data/wmo_sarep.bufr'
+#f=open(filename,'r')
+#lixo=f.read(30)
+
 
 # Looks like a good first approach, but still needs:
 #    - Think about an array index. I believe is the best way to reference were to store the output data
@@ -136,9 +140,15 @@ from UserDict import UserDict
 #	return
 
 class Descriptor0(UserDict):
-    def __init__(self,data):
-        self.data=data
+    #def __init__(self,data):
+    def __init__(self,F,X,Y):
+        self.F=F
+	self.X=X
+	self.Y=Y
+        self.data=globals()['descriptorstable'][F][X][Y]
 	self.showed=False
+	self.repetitions=1
+	self.n=0
 	return
     def walk(self):
         if self.showed==False:
@@ -168,17 +178,76 @@ class Descriptors(UserList):
     #def __init__(self):
         UserList.__init__(self)
         #self.data=WalkingList()
+	self.i=0
+	self.repetitions=1
+	self.n=0
 	if (F != None) & (X != None) & (Y != None):
 	    self.append(F,X,Y)
         return
+    def load(self,descriptorslist):
+        """
+	"""
+	i=0
+	while i<len(descriptorslist):
+	   F,X,Y = descriptorslist[i] 
+	   print i
+	   print "Processing: %s, %s, %s" % (F,X,Y)
+	   if (F==0):
+	       self.data.append(Descriptor0(F,X,Y))
+	   elif (F==1):
+               tmp=Descriptors()
+               tmp.F=F
+               tmp.X=X
+               tmp.Y=Y
+	       if tmp.Y>0:
+	           sublist=descriptorslist[i+1:i+1+X]
+		   #tmp.n=Y
+               elif tmp.Y==0:
+	           sublist=descriptorslist[i+2:i+2+X]
+	           tmp.repfactor=descriptorslist[i+1]
+               for f,x,y in sublist:
+                   if f==1:
+                       print "Library not ready for hierarcheal repetitions"
+                       self.data=None
+                       return
+               tmp.load(sublist)
+	       self.data.append(tmp)
+	   elif (F==3):
+               tmp=Descriptors()
+               tmp.F=F
+               tmp.X=X
+               tmp.Y=Y
+	       tmp.load(globals()['descriptorstable'][F][X][Y])
+	       self.data.append(tmp)
+	   i+=1
+	return
+    def walk(self):
+        output=self.data[self.i].walk()
+	#print "output:",output
+	#print "i:",i
+	if (output == None):
+	    self.n+=1
+	    if self.n<self.repetitions:
+	        self.i=0
+		output=self.data[self.i].walk()
+	    if (self.i<len(self.data)):
+                output=self.data[self.i].walk()
+            else:
+	        output=None
+	else:
+	    self.i+=1
+	return output
+
+a=Descriptors()
+a.load(descriptorslist)
+
     def append(self,F,X,Y):
-	self.i=0
-        self.F=F
-	self.X=X
-	self.Y=Y
+	#self.i=0
 	if (F==0):
 	    #self.data.append(WalkingList(globals()['descriptorstable'][F][X][Y]))
-	    self.data.append(Descriptor0(globals()['descriptorstable'][F][X][Y]))
+	    #self.data.append(Descriptor0(globals()['descriptorstable'][F][X][Y]))
+	    #self.data.append(Descriptor0(F,X,Y))
+	    tmp=(Descriptor0(F,X,Y))
 	    #self.data.append((globals()['descriptorstable'][F][X][Y]))
         elif (F==1):
 	    # Replicator class
@@ -186,16 +255,61 @@ class Descriptors(UserList):
 	    # Y if > 0 is the number of repetitions
 	    #   if = 0 means a delayed replicaton, and a class 0 31 should be the following field.
 	    print "Hey!!! F=1!!!"
-	    self.nfields=X
-	    if Y==0:
-	        # Need to read n on the next field
-	    else:
-	        self.n=Y
+	    #self.nfields=X
+	    tmp=Descriptors()
+	    tmp.F=F
+	    tmp.X=X
+	    tmp.Y=Y
+	    self.insiderepetition=True
+	    #if Y==0:
+	    #    # Need to read n on the next field
+	    #    pass
+	    #else:
+	    #    self.n=Y
 	elif (F==3):
+	    tmp=Descriptors()
+	    tmp.F=F
+	    tmp.X=X
+	    tmp.Y=Y
 	    for f,x,y in globals()['descriptorstable'][F][X][Y]:
 	        print f,x,y
-	        self.data.append(Descriptors(f,x,y))
+	        #tmp.append(Descriptors(f,x,y))
+	        tmp.append(f,x,y)
+	    #self.data.append(tmp)
+	if self.insiderepetition==True
+	    #self.tmp.append(tmp)
+	    #if len(self.tmp)==self.tmp.X:
+	    #    self.insiderepetition==False
+	    #	self.data.append(self.tmp)
+	    self.data[-1].append(tmp)
+	else:
+            self.data.append(tmp)
 	return
+    def parser(self,descriptorlist):
+        for i,[F,X,Y] in enumerate(descriptorlist):
+	    print "i: %i" % i
+	    if F==0:
+	        #self.data.append(Descriptor0(globals()['descriptorstable'][F][X][Y]))
+		self.append(F,X,Y)
+            elif F==1:
+	        if Y>0:
+		    start=i+1
+		    end=i+1+X
+                elif Y==0:
+		    start=i+2
+		    end=i+2+X
+                tmp=Descriptors()
+                tmp.parser(descriptorlist[start:end])
+                print "tmp",tmp
+	    elif F==3:
+	        ##tmp=[]
+	        #tmp=Descriptors()
+	        #for f,x,y in globals()['descriptorstable'][F][X][Y]:
+	        #    #tmp.append(Descriptors(f,x,y))
+	        #    tmp.append(f,x,y)
+		#self.data.append(tmp)
+		self.append(F,X,Y)
+        return
     def walk(self):
         output=self.data[self.i].walk()
 	#print "output:",output
@@ -209,6 +323,10 @@ class Descriptors(UserList):
 	return output
 	
 # To test:
+#filename = '/home/castelao/work/projects/BUFR/others/bufr_000340/data/wmo_sarep.bufr'
+#f=open(filename,'r')
+#lixo=f.read(30)
+
 # x=Descriptor(3,1,1)
 # x.walk()
 # x.walk()
@@ -232,13 +350,15 @@ sectiondata[3]['xxxx'] = safe_unpack('>i', f.read(1))
 
 n_descriptors = (sectiondata[3]['sec3size']-7)/2
 sectiondata[3]['descriptors']=Descriptors()
+tmp=[]
 for i in range(n_descriptors):
     FX = safe_unpack('>i', f.read(1))
     F = FX/64
     X = FX%64
     Y = safe_unpack('>i', f.read(1))
     #sectiondata[3]['descriptors'].append([FX,F,X,Y])
-    sectiondata[3]['descriptors'].append(F,X,Y)
+    #sectiondata[3]['descriptors'].append(F,X,Y)
+    tmp.append([F,X,Y])
     print F,X,Y
     if F == 0:
         print descriptorstable[F][X][Y]
