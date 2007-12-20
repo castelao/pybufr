@@ -27,10 +27,6 @@ def Denary2Binary(n):
         n = n >> 1
     return bStr
 
-def int2bin(n, count=8):
-    """returns the binary of integer n, using count number of digits"""
-    return "".join([str((n >> y) & 1) for y in range(count-1, -1, -1)])
-
 def readdescriptor(filename):
     descriptors={}
     f=open(filename)
@@ -157,6 +153,9 @@ class Descriptor0(UserDict):
 	else:
 	    self.showed=False
 	    return
+    def reset(self):
+        self.showed=False
+	return
 	
 #class WalkingList(UserList):
 #    #def __init__(self):
@@ -190,8 +189,8 @@ class Descriptors(UserList):
 	i=0
 	while i<len(descriptorslist):
 	   F,X,Y = descriptorslist[i] 
-	   print i
-	   print "Processing: %s, %s, %s" % (F,X,Y)
+	   #print "Processing: %s, %s, %s" % (F,X,Y)
+	   #print F,X,Y,(globals()['descriptorstable'][F][X][Y])
 	   if (F==0):
 	       self.data.append(Descriptor0(F,X,Y))
 	   elif (F==1):
@@ -201,10 +200,13 @@ class Descriptors(UserList):
                tmp.Y=Y
 	       if tmp.Y>0:
 	           sublist=descriptorslist[i+1:i+1+X]
-		   #tmp.n=Y
+		   tmp.repetitions=Y
+		   i+=X
                elif tmp.Y==0:
 	           sublist=descriptorslist[i+2:i+2+X]
-	           tmp.repfactor=descriptorslist[i+1]
+	           tmp.repfactor=Descriptor0(descriptorslist[i+1][0],descriptorslist[i+1][1],descriptorslist[i+1][2])
+		   tmp.repetitions=None
+		   i+=1+X
                for f,x,y in sublist:
                    if f==1:
                        print "Library not ready for hierarcheal repetitions"
@@ -222,110 +224,129 @@ class Descriptors(UserList):
 	   i+=1
 	return
     def walk(self):
+        #print "self.i: %s" % (self.i)
         output=self.data[self.i].walk()
 	#print "output:",output
 	#print "i:",i
 	if (output == None):
-	    self.n+=1
-	    if self.n<self.repetitions:
-	        self.i=0
-		output=self.data[self.i].walk()
-	    if (self.i<len(self.data)):
-                output=self.data[self.i].walk()
+            #print "i: %s, len(data): %s" % (self.i,len(self.data))
+            if self.i<(len(self.data)-1):
+	        self.i+=1
+	        #self.n+=1
+                if (self.data[self.i].F == 1) & (self.data[self.i].Y == 0) & ((self.data[self.i].n == 0)):
+	            output = self.data[self.i].repfactor
+	        else:
+	            output=self.data[self.i].walk()
+	    #if self.n<self.repetitions:
+	    #    self.i=0
+	    #if (self.i<len(self.data)):
+            #    output=self.data[self.i].walk()
             else:
-	        output=None
-	else:
-	    self.i+=1
+	        self.n+=1
+                if (self.n<self.repetitions):
+		    self.reset()
+		    output=self.data[self.i].walk()
+		else:
+                    output=None
+	#else:
+	#    #self.i+=1
+        #    #print "I'm out"
 	return output
-
-a=Descriptors()
-a.load(descriptorslist)
-
-    def append(self,F,X,Y):
-	#self.i=0
-	if (F==0):
-	    #self.data.append(WalkingList(globals()['descriptorstable'][F][X][Y]))
-	    #self.data.append(Descriptor0(globals()['descriptorstable'][F][X][Y]))
-	    #self.data.append(Descriptor0(F,X,Y))
-	    tmp=(Descriptor0(F,X,Y))
-	    #self.data.append((globals()['descriptorstable'][F][X][Y]))
-        elif (F==1):
-	    # Replicator class
-	    # X is the number of the following fields that should be replicated
-	    # Y if > 0 is the number of repetitions
-	    #   if = 0 means a delayed replicaton, and a class 0 31 should be the following field.
-	    print "Hey!!! F=1!!!"
-	    #self.nfields=X
-	    tmp=Descriptors()
-	    tmp.F=F
-	    tmp.X=X
-	    tmp.Y=Y
-	    self.insiderepetition=True
-	    #if Y==0:
-	    #    # Need to read n on the next field
-	    #    pass
-	    #else:
-	    #    self.n=Y
-	elif (F==3):
-	    tmp=Descriptors()
-	    tmp.F=F
-	    tmp.X=X
-	    tmp.Y=Y
-	    for f,x,y in globals()['descriptorstable'][F][X][Y]:
-	        print f,x,y
-	        #tmp.append(Descriptors(f,x,y))
-	        tmp.append(f,x,y)
-	    #self.data.append(tmp)
-	if self.insiderepetition==True
-	    #self.tmp.append(tmp)
-	    #if len(self.tmp)==self.tmp.X:
-	    #    self.insiderepetition==False
-	    #	self.data.append(self.tmp)
-	    self.data[-1].append(tmp)
-	else:
-            self.data.append(tmp)
+    def reset(self):
+        """ Reset the counter
+	"""
+	self.data[self.i].reset()
+	self.i=0
 	return
-    def parser(self,descriptorlist):
-        for i,[F,X,Y] in enumerate(descriptorlist):
-	    print "i: %i" % i
-	    if F==0:
-	        #self.data.append(Descriptor0(globals()['descriptorstable'][F][X][Y]))
-		self.append(F,X,Y)
-            elif F==1:
-	        if Y>0:
-		    start=i+1
-		    end=i+1+X
-                elif Y==0:
-		    start=i+2
-		    end=i+2+X
-                tmp=Descriptors()
-                tmp.parser(descriptorlist[start:end])
-                print "tmp",tmp
-	    elif F==3:
-	        ##tmp=[]
-	        #tmp=Descriptors()
-	        #for f,x,y in globals()['descriptorstable'][F][X][Y]:
-	        #    #tmp.append(Descriptors(f,x,y))
-	        #    tmp.append(f,x,y)
-		#self.data.append(tmp)
-		self.append(F,X,Y)
-        return
-    def walk(self):
-        output=self.data[self.i].walk()
-	#print "output:",output
-	#print "i:",i
-	if (output == None):
-	    self.i+=1
-	    if (self.i<len(self.data)):
-                output=self.data[self.i].walk()
-            else:
-	        output=None
-	return output
+
+#a=Descriptors()
+#a.load(descriptorslist)
+
+#    def append(self,F,X,Y):
+#	#self.i=0
+#	if (F==0):
+#	    #self.data.append(WalkingList(globals()['descriptorstable'][F][X][Y]))
+#	    #self.data.append(Descriptor0(globals()['descriptorstable'][F][X][Y]))
+#	    #self.data.append(Descriptor0(F,X,Y))
+#	    tmp=(Descriptor0(F,X,Y))
+#	    #self.data.append((globals()['descriptorstable'][F][X][Y]))
+#        elif (F==1):
+#	    # Replicator class
+#	    # X is the number of the following fields that should be replicated
+#	    # Y if > 0 is the number of repetitions
+#	    #   if = 0 means a delayed replicaton, and a class 0 31 should be the following field.
+#	    print "Hey!!! F=1!!!"
+#	    #self.nfields=X
+#	    tmp=Descriptors()
+#	    tmp.F=F
+#	    tmp.X=X
+#	    tmp.Y=Y
+#	    self.insiderepetition=True
+#	    #if Y==0:
+#	    #    # Need to read n on the next field
+#	    #    pass
+#	    #else:
+#	    #    self.n=Y
+#	elif (F==3):
+#	    tmp=Descriptors()
+#	    tmp.F=F
+#	    tmp.X=X
+#	    tmp.Y=Y
+#	    for f,x,y in globals()['descriptorstable'][F][X][Y]:
+#	        print f,x,y
+#	        #tmp.append(Descriptors(f,x,y))
+#	        tmp.append(f,x,y)
+#	    #self.data.append(tmp)
+#	if self.insiderepetition==True
+#	    #self.tmp.append(tmp)
+#	    #if len(self.tmp)==self.tmp.X:
+#	    #    self.insiderepetition==False
+#	    #	self.data.append(self.tmp)
+#	    self.data[-1].append(tmp)
+#	else:
+#            self.data.append(tmp)
+#	return
+#    def parser(self,descriptorlist):
+#        for i,[F,X,Y] in enumerate(descriptorlist):
+#	    print "i: %i" % i
+#	    if F==0:
+#	        #self.data.append(Descriptor0(globals()['descriptorstable'][F][X][Y]))
+#		self.append(F,X,Y)
+#            elif F==1:
+#	        if Y>0:
+#		    start=i+1
+#		    end=i+1+X
+#                elif Y==0:
+#		    start=i+2
+#		    end=i+2+X
+#                tmp=Descriptors()
+#                tmp.parser(descriptorlist[start:end])
+#                print "tmp",tmp
+#	    elif F==3:
+#	        ##tmp=[]
+#	        #tmp=Descriptors()
+#	        #for f,x,y in globals()['descriptorstable'][F][X][Y]:
+#	        #    #tmp.append(Descriptors(f,x,y))
+#	        #    tmp.append(f,x,y)
+#		#self.data.append(tmp)
+#		self.append(F,X,Y)
+#        return
+#    def walk(self):
+#        output=self.data[self.i].walk()
+#	#print "output:",output
+#	#print "i:",i
+#	if (output == None):
+#	    self.i+=1
+#	    if (self.i<len(self.data)):
+#                output=self.data[self.i].walk()
+#            else:
+#	        output=None
+#	return output
 	
 # To test:
-#filename = '/home/castelao/work/projects/BUFR/others/bufr_000340/data/wmo_sarep.bufr'
-#f=open(filename,'r')
-#lixo=f.read(30)
+filename = '/home/castelao/work/projects/BUFR/others/bufr_000340/data/wmo_sarep.bufr'
+f=open(filename,'r')
+lixo=f.read(30)
 
 # x=Descriptor(3,1,1)
 # x.walk()
@@ -360,9 +381,9 @@ for i in range(n_descriptors):
     #sectiondata[3]['descriptors'].append(F,X,Y)
     tmp.append([F,X,Y])
     print F,X,Y
-    if F == 0:
-        print descriptorstable[F][X][Y]
-
+    #if F == 0:
+    #    print descriptorstable[F][X][Y]
+sectiondata[3]['descriptors'].load(tmp)
 # ============================================================================
 # ==== Read section 4
 # ============================================================================
@@ -371,22 +392,87 @@ sectiondata[4]={}
 sectiondata[4]['size'] = safe_unpack('>i',f.read(3))
 sectiondata[4]['reserved'] = safe_unpack('>i', f.read(1))
 
+
+def int2bin(n, count=8):
+    """returns the binary of integer n, using count number of digits"""
+    return "".join([str((n >> y) & 1) for y in range(count-1, -1, -1)])
+
+class BinaryData:
+    def __init__(self,f,size):
+        self.f=f
+	dir(self.f)
+	self.size=size
+	self.n=0
+	self.bitline=''
+	return
+    def read(self,nbits):
+        while (nbits>len(self.bitline)):
+	    #self.bitline+=int2bin(safe_unpack('>i', self.f.read(1)))
+	    #print dir(self.f)
+	    self.n+=1
+	    if (self.n>=self.size):
+	        print "Trying to read more then was supposed"
+		return
+	    x=self.f.read(1)
+	    #print "x: %s" % x
+	    self.bitline+=int2bin(safe_unpack('>i', x))
+	output=self.bitline[:nbits]
+	self.bitline=self.bitline[nbits:]
+	return output
+
+
 # Need to change it. Should read variable by variable.
 #rownbits=8
 bitline=''
-for i in range(sectiondata[4]['size']-4):
-    bitline+=int2bin(safe_unpack('>i', f.read(1)))
+#for i in range(sectiondata[4]['size']-4):
+#    bitline+=f.read(1)
+#    bitline+=int2bin(safe_unpack('>i', f.read(1)))
+binarydata=BinaryData(f,sectiondata[4]['size'])
+
+def datatype(unit):
+    """
+    """
+    datatypes={'NUMERIC':'int',
+     'YEAR':'int',
+     'MONTH':'int',
+     'DAY':'int',
+     'HOUR':'int',
+     'MINUTE':'int',
+     'SECOND':'int',
+     'DEGREE':'int',
+     'CCITTIA5':'str',
+     }
+    if unit in datatypes.keys():
+        return datatypes[unit]
+    else:
+        return unit
 
 sectiondata[4]['data']=[]
 fin=0
 #sizes=[7,10,12,4,6,5,6,10,8]
 #for s in sizes:
-for i in range(15):
-    s=sectiondata[3]['descriptors'].walk()['bitwidth']
-    ini=fin
-    fin+=s
-    print s,ini,fin,bitline[ini:fin]
-    sectiondata[4]['data'].append(int(bitline[ini:fin],2))
+sectiondata[3]['descriptors'].reset()
+d=sectiondata[3]['descriptors'].walk()
+#for i in range(40):
+while d:
+    s=d['bitwidth']
+    #ini=fin
+    #fin+=s
+    b=binarydata.read(s)
+    if datatype(d['unit'])=='int':
+        #output = int(bitline[ini:fin],2)
+        output = int(b,2)
+	output = (output+d['reference'])
+	if d['scale'] != 0:
+	    output = output/10.**(d['scale'])
+    elif(datatype(d['unit'])=='str'):
+        output="".join([struct.pack('>i',int(b[j*8:j*8+8],2))[-1] for j in range(len(b)/8)])
+    else:
+        output = b
+    sectiondata[4]['data'].append(output)
+    #print s,ini,fin,d['name'],bitline[ini:fin],sectiondata[4]['data'][-1]
+    print s,d['name'],b,sectiondata[4]['data'][-1]
+    d=sectiondata[3]['descriptors'].walk()
 
 #for i in range(sectiondata[4]['size']-4-8):
 #    sectiondata[4]['data'].append(safe_unpack('>i', f.read(1)))
