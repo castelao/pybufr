@@ -1,3 +1,9 @@
+#!/usr/bin/env python
+# -*- coding: Latin-1 -*-
+# vim: tabstop=4 shiftwidth=4 expandtab
+
+# Next step is improve the readdescriptor. Improve the way how to load the description tables. 
+
 filename = './data/wmo_sarep.bufr'
 f=open(filename,'r')
 #content = f.read()
@@ -28,6 +34,11 @@ def Denary2Binary(n):
     return bStr
 
 def readdescriptor(filename):
+    """
+
+        !!!ATENTION!!!
+        Keep in mind to be able to define the table versions and load specific tables on demand. Maybe it should read the main tables on the start (not sure if not on demand too), but probably load the specific tables only on demand. The idea is that when request certain table from the function or class, if it's not loaded, go and load only that.
+    """
     descriptors={}
     f=open(filename)
     for line in f:
@@ -60,6 +71,67 @@ descriptorstable[3][1][25] = [[3,1,23],[0,4,3],[3,1,12]]
 # 3 1 12
 #print descriptors
 # ====
+from UserDict import UserDict
+from UserDict import IterableUserDict
+
+def _unpack_int(bytes):
+    """Unpack an integer bytes sequence.
+
+       From the bytes length the type of integer is deduced,
+        and extra bytes are appended to fit the required size.
+    """
+    n=len(bytes)
+    if n<=4:
+        output = struct.unpack('>i','\x00'*(4-n)+bytes)
+    elif (n>4) & (n<=8):
+        output = struct.unpack('>q','\x00'*(8-n)+bytes)
+    return output[0]
+
+
+class section0(IterableUserDict):
+    """A class to read the section 0 of a BUFR file
+    """
+    def __init__(self,f):
+        """
+        """
+        self.data={}
+        self.data['ident'] = f.read(4)
+        self.data['size'] = _unpack_int(f.read(3))
+        self.data['version'] = _unpack_int(f.read(1))
+        return
+
+class section1v4(IterableUserDict):
+    """A class to read the section 1 of a BUFR file version 4
+    """
+    def __init__(self,f):
+        """
+        """
+        self.data={}
+        self.read()
+        return
+    def read(self):
+        self.data['sec1size'] = _unpack_int(f.read(3))        # 1-3
+        self.data['mastertablenumber'] = _unpack_int(f.read(1))   # 4
+        self.data['originatedcenter'] = _unpack_int(f.read(2))    # 5-6
+        self.data['originatedsubcenter'] = _unpack_int(f.read(2))        # 7-8
+        self.data['updateversion'] = _unpack_int(f.read(1))  # 9
+        self.data['optionalsec'] = _unpack_int(f.read(1))    # 10    Atention here!!!
+        self.data['datacategory'] = _unpack_int(f.read(1))   # 11
+        self.data['datasubcategory'] = _unpack_int(f.read(1))    # 12
+        self.data['localsubcategory'] = _unpack_int(f.read(1))   # 13
+        self.data['mastertableversion'] = _unpack_int(f.read(1)) # 14
+        self.data['localtableversion'] = _unpack_int(f.read(1))  # 15
+        self.data['year'] = _unpack_int(f.read(2))            # 16
+        self.data['month'] = _unpack_int(f.read(1))          # 17-18
+        self.data['day'] = _unpack_int(f.read(1))               # 19
+        self.data['hour'] = _unpack_int(f.read(1))              # 20
+        self.data['minute'] = _unpack_int(f.read(1))            # 21
+        self.data['second'] = _unpack_int(f.read(1))            # 22
+        return
+
+
+filename = '/home/castelao/work/projects/BUFR/others/bufr_000340/data/wmo_sarep.bufr'
+f=open(filename,'r')
 
 
 # 39 total
@@ -72,37 +144,14 @@ sectiondata={}
 #			'bufredition':1}}
 
 # Read section 0
-#sec=0
-sectiondata[0]={}
+sectiondata[0]=section0(f)
 
-#sections[0]=content[:0:8]
-
-sectiondata[0]['ident'] = f.read(4)
-#size = struct.unpack('>i',content[4:7])
-sectiondata[0]['size'] = safe_unpack('>i',f.read(3))
-sectiondata[0]['version'] = safe_unpack('>i',f.read(1))
+print sectiondata[0]
 
 # Read section 1
-sectiondata[1]={}
+sectiondata[1]=section1v4(f)
 
-sectiondata[1]['sec1size'] = safe_unpack('>i',f.read(3))		# 1-3
-sectiondata[1]['mastertablenumber'] = safe_unpack('>i',f.read(1))	# 4
-sectiondata[1]['originatedcenter'] = safe_unpack('>i',f.read(2))	# 5-6
-sectiondata[1]['originatedsubcenter'] = safe_unpack('>i', f.read(2))		# 7-8
-sectiondata[1]['updateversion'] = safe_unpack('>i', f.read(1))	# 9
-sectiondata[1]['optionalsec'] = safe_unpack('>i', f.read(1))	# 10    Atention here!!!
-sectiondata[1]['datacategory'] = safe_unpack('>i', f.read(1))	# 11
-sectiondata[1]['datasubcategory'] = safe_unpack('>i', f.read(1))	# 12
-sectiondata[1]['localsubcategory'] = safe_unpack('>i', f.read(1))	# 13
-sectiondata[1]['mastertableversion'] = safe_unpack('>i', f.read(1))	# 14
-sectiondata[1]['localtableversion'] = safe_unpack('>i', f.read(1))	# 14
-sectiondata[1]['year'] = safe_unpack('>i',f.read(2))			# 15
-sectiondata[1]['month'] = safe_unpack('>i', f.read(1))			# 16-17
-sectiondata[1]['day'] = safe_unpack('>i', f.read(1))
-sectiondata[1]['hour'] = safe_unpack('>i', f.read(1))
-sectiondata[1]['minute'] = safe_unpack('>i', f.read(1))
-sectiondata[1]['second'] = safe_unpack('>i', f.read(1))
-#reserved = safe_unpack('>i',content[26:8+sec1size])
+print sectiondata[1]
 
 # Read section 2
 
@@ -149,7 +198,7 @@ class Descriptor0(UserDict):
     def walk(self):
         if self.showed==False:
 	    self.showed=True
-            return self.data
+            return self
 	else:
 	    self.showed=False
 	    return
@@ -182,6 +231,7 @@ class Descriptors(UserList):
 	self.n=0
 	if (F != None) & (X != None) & (Y != None):
 	    self.append(F,X,Y)
+	self.dataind=-1
         return
     def load(self,descriptorslist):
         """
@@ -193,8 +243,13 @@ class Descriptors(UserList):
 	   #print F,X,Y,(globals()['descriptorstable'][F][X][Y])
 	   if (F==0):
 	       self.data.append(Descriptor0(F,X,Y))
+	       self.dataind+=1
+	       print "self.dataind: ",self.dataind
+	       self.data[-1]['index']=self.dataind
+	       print self.data[-1]
 	   elif (F==1):
                tmp=Descriptors()
+	       tmp.dataind=self.dataind
                tmp.F=F
                tmp.X=X
                tmp.Y=Y
@@ -213,13 +268,16 @@ class Descriptors(UserList):
                        self.data=None
                        return
                tmp.load(sublist)
+	       self.dataind=tmp.dataind
 	       self.data.append(tmp)
 	   elif (F==3):
                tmp=Descriptors()
+	       tmp.dataind=self.dataind
                tmp.F=F
                tmp.X=X
                tmp.Y=Y
 	       tmp.load(globals()['descriptorstable'][F][X][Y])
+	       self.dataind=tmp.dataind
 	       self.data.append(tmp)
 	   i+=1
 	return
@@ -447,7 +505,7 @@ def datatype(unit):
     else:
         return unit
 
-sectiondata[4]['data']=[]
+sectiondata[4]['data']={}
 fin=0
 #sizes=[7,10,12,4,6,5,6,10,8]
 #for s in sizes:
@@ -469,9 +527,13 @@ while d:
         output="".join([struct.pack('>i',int(b[j*8:j*8+8],2))[-1] for j in range(len(b)/8)])
     else:
         output = b
-    sectiondata[4]['data'].append(output)
-    #print s,ini,fin,d['name'],bitline[ini:fin],sectiondata[4]['data'][-1]
-    print s,d['name'],b,sectiondata[4]['data'][-1]
+    if d.X not in [30,31,32]:
+        if d['index'] not in sectiondata[4]['data']:
+            sectiondata[4]['data'][d['index']]=[]
+        sectiondata[4]['data'][d['index']].append(output)
+        #print s,ini,fin,d['name'],bitline[ini:fin],sectiondata[4]['data'][-1]
+        print s,d['name'],b,sectiondata[4]['data'][d['index']][-1]
+    else:
     d=sectiondata[3]['descriptors'].walk()
 
 #for i in range(sectiondata[4]['size']-4-8):
