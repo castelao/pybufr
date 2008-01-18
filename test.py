@@ -498,6 +498,7 @@ def datatype(unit):
      'SECOND':'int',
      'DEGREE':'int',
      'CCITTIA5':'str',
+     'M/S':'int'
      }
     if unit in datatypes.keys():
         return datatypes[unit]
@@ -512,6 +513,7 @@ sectiondata[3]['descriptors'].reset()
 d=sectiondata[3]['descriptors'].walk()
 #for i in range(40):
 while d:
+    print d
     s=d['bitwidth']
     #ini=fin
     #fin+=s
@@ -519,7 +521,7 @@ while d:
     if datatype(d['unit'])=='int':
         #output = int(bitline[ini:fin],2)
         output = int(b,2)
-    output = (output+d['reference'])
+        output = (output+d['reference'])
     if d['scale'] != 0:
         output = output/10.**(d['scale'])
     elif(datatype(d['unit'])=='str'):
@@ -532,8 +534,8 @@ while d:
         sectiondata[4]['data'][d['index']].append(output)
         #print s,ini,fin,d['name'],bitline[ini:fin],sectiondata[4]['data'][-1]
         print s,d['name'],b,sectiondata[4]['data'][d['index']][-1]
-    else:
-        d=sectiondata[3]['descriptors'].walk()
+    #else:
+    d=sectiondata[3]['descriptors'].walk()
 
 #for i in range(sectiondata[4]['size']-4-8):
 #    sectiondata[4]['data'].append(safe_unpack('>i', f.read(1)))
