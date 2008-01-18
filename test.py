@@ -2,7 +2,8 @@
 # -*- coding: Latin-1 -*-
 # vim: tabstop=4 shiftwidth=4 expandtab
 
-# Next step is improve the readdescriptor. Improve the way how to load the description tables. 
+
+import bufr
 
 filename = './data/wmo_sarep.bufr'
 f=open(filename,'r')
@@ -10,6 +11,9 @@ f=open(filename,'r')
 #f.close()
 
 import struct
+from UserDict import UserDict
+#from UserDict import IterableUserDict
+from UserList import UserList
 
 #if (content[0:4]!='BUFR') | (content[-4:]=='7777'):
 #    print "Don't looks like a BUFR file"
@@ -33,101 +37,9 @@ def Denary2Binary(n):
         n = n >> 1
     return bStr
 
-def readdescriptor(filename):
-    """
-
-        !!!ATENTION!!!
-        Keep in mind to be able to define the table versions and load specific tables on demand. Maybe it should read the main tables on the start (not sure if not on demand too), but probably load the specific tables only on demand. The idea is that when request certain table from the function or class, if it's not loaded, go and load only that.
-    """
-    descriptors={}
-    f=open(filename)
-    for line in f:
-        #fields = line.split('\t')
-        fields=[line[1:7],line[8:72].strip(),line[73:98].strip(),int(line[98:101]),int(line[102:114]),int(line[115:118])]
-        F=int(fields[0][0:1])
-        X=int(fields[0][1:3])
-        Y=int(fields[0][3:6])
-        if F not in descriptors:
-            descriptors[F]={}
-        if X not in descriptors[F]:
-            descriptors[F][X]={}
-        #if Y not in descriptors[F][X]:
-        #    descriptors[F][X]={}
-        descriptors[F][X][Y] = {'name':fields[1],'unit':fields[2],'scale':fields[3],'reference':fields[4],'bitwidth':fields[5]}
-    return descriptors
-
 #descriptors = readdescriptor('table-B.txt')
-descriptorstable = readdescriptor('/home/castelao/work/projects/BUFR/others/bufr_000340/bufrtables/B0000000000000007000.TXT')
-descriptorstable[3]={}
-descriptorstable[3][1]={}
-descriptorstable[3][1][1] = [[0,1,1],[0,1,2]]
-descriptorstable[3][1][11] = [[0,4,1],[0,4,2],[0,4,3]]
-descriptorstable[3][1][12] = [[0,4,4],[0,4,5]]
-descriptorstable[3][1][23] = [[0,5,2],[0,6,2]]
-descriptorstable[3][1][25] = [[3,1,23],[0,4,3],[3,1,12]]
-#descriptors[3][1][1] = {'name':'WMO block and station number','descriptors':[],'scale':fields[3],'reference':fields[4],'width':fields[5]}
-# 3 1 1
-# 3 1 11
-# 3 1 12
-#print descriptors
+descriptorstable = bufr.readdescriptor('/home/castelao/work/projects/BUFR/others/bufr_000340/bufrtables/B0000000000000007000.TXT')
 # ====
-from UserDict import UserDict
-from UserDict import IterableUserDict
-
-def _unpack_int(bytes):
-    """Unpack an integer bytes sequence.
-
-       From the bytes length the type of integer is deduced,
-        and extra bytes are appended to fit the required size.
-    """
-    n=len(bytes)
-    if n<=4:
-        output = struct.unpack('>i','\x00'*(4-n)+bytes)
-    elif (n>4) & (n<=8):
-        output = struct.unpack('>q','\x00'*(8-n)+bytes)
-    return output[0]
-
-class section0(IterableUserDict):
-    """A class to read the section 0 of a BUFR file
-    """
-    def __init__(self,f):
-        """
-        """
-        self.data={}
-        self.data['ident'] = f.read(4)
-        self.data['size'] = _unpack_int(f.read(3))
-        self.data['version'] = _unpack_int(f.read(1))
-        return
-
-class section1v4(IterableUserDict):
-    """A class to read the section 1 of a BUFR file version 4
-    """
-    def __init__(self,f):
-        """
-        """
-        self.data={}
-        self.read()
-        return
-    def read(self):
-        self.data['sec1size'] = _unpack_int(f.read(3))        # 1-3
-        self.data['mastertablenumber'] = _unpack_int(f.read(1))   # 4
-        self.data['originatedcenter'] = _unpack_int(f.read(2))    # 5-6
-        self.data['originatedsubcenter'] = _unpack_int(f.read(2))        # 7-8
-        self.data['updateversion'] = _unpack_int(f.read(1))  # 9
-        self.data['optionalsec'] = _unpack_int(f.read(1))    # 10    Atention here!!!
-        self.data['datacategory'] = _unpack_int(f.read(1))   # 11
-        self.data['datasubcategory'] = _unpack_int(f.read(1))    # 12
-        self.data['localsubcategory'] = _unpack_int(f.read(1))   # 13
-        self.data['mastertableversion'] = _unpack_int(f.read(1)) # 14
-        self.data['localtableversion'] = _unpack_int(f.read(1))  # 15
-        self.data['year'] = _unpack_int(f.read(2))            # 16
-        self.data['month'] = _unpack_int(f.read(1))          # 17-18
-        self.data['day'] = _unpack_int(f.read(1))               # 19
-        self.data['hour'] = _unpack_int(f.read(1))              # 20
-        self.data['minute'] = _unpack_int(f.read(1))            # 21
-        self.data['second'] = _unpack_int(f.read(1))            # 22
-        return
-
 
 filename = '/home/castelao/work/projects/BUFR/others/bufr_000340/data/wmo_sarep.bufr'
 f=open(filename,'r')
@@ -143,12 +55,12 @@ sectiondata={}
 #			'bufredition':1}}
 
 # Read section 0
-sectiondata[0]=section0(f)
+sectiondata[0]=bufr.section0(f)
 
 print sectiondata[0]
 
 # Read section 1
-sectiondata[1]=section1v4(f)
+sectiondata[1]=bufr.section1v4(f)
 
 print sectiondata[1]
 
@@ -173,8 +85,6 @@ if (sectiondata[1]['optionalsec'] != 0):
 #    - Think about a rewind system for the walk. Maybe simply save a copy, of the data when the walk is called, and when the rewind is called, it only overload the copied data.
 #    - Still missing how to deal with the repetitions (class 1).
 
-from UserList import UserList
-from UserDict import UserDict
 #import itertools
 
 
@@ -401,9 +311,9 @@ class Descriptors(UserList):
 #	return output
 	
 # To test:
-filename = '/home/castelao/work/projects/BUFR/others/bufr_000340/data/wmo_sarep.bufr'
-f=open(filename,'r')
-lixo=f.read(30)
+#filename = '/home/castelao/work/projects/BUFR/others/bufr_000340/data/wmo_sarep.bufr'
+#f=open(filename,'r')
+#lixo=f.read(30)
 
 # x=Descriptor(3,1,1)
 # x.walk()
