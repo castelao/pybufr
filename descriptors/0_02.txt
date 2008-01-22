@@ -1,0 +1,194 @@
+    0-02-001    Type of station                                     Code table                  0            0          2  TOST
+    0-02-002    Type of instrument for wind measurement             Flag table                  0            0          4  TIWM
+    0-02-003    Type of measuring instrument used                   Code table                  0            0          4  A4ME
+    0-02-004    Type of instrumentation for evaporation             Code table                  0            0          4  TIEM
+                measurement or type of crop for which
+                evapotranspiration is reported
+    0-02-005    Precision of temperature observation                K                           2            0          7  PCAT
+    0-02-007    Tide-gauge instrument type                          Code table                  0            0          4  TGIT
+    0-02-011    Radiosonde type                                     Common code table C-2       0            0          8  RATP
+    0-02-012    Radiosonde computational method                     Code table                  0            0          4  RACM
+    0-02-013    Solar and infrared radiation correction             Code table                  0            0          4  SIRC
+    0-02-014    Tracking technique/status of system used            Common code table C-7       0            0          7  TTSS
+    0-02-015    Radiosonde completeness                             Code table                  0            0          4  RACP
+    0-02-016    Radiosonde configuration                            Flag table                  0            0          5  RCONF
+    0-02-019    Satellite instruments                               Common code table C-8       0            0         11  SIID
+    0-02-020    Satellite classification                            Code table                  0            0          9  SCLF
+    0-02-021    Satellite instrument data used in processing        Flag table                  0            0          9  SIDU
+    0-02-022    Satellite data-processing technique used            Flag table                  0            0          8  SDPT
+    0-02-023    Satellite derived wind computation method           Code table                  0            0          4  SWCM
+    0-02-024    Integrated mean humidity computational method       Code table                  0            0          4  IMHC
+    0-02-025    Satellite channel(s) used in computation            Flag table                  0            0         25  SCUC
+    0-02-026    Cross-track resolution                              m                           2            0         12  CTRE
+    0-02-027    Along-track resolution                              m                           2            0         12  ATRE
+    0-02-028    Segment size at nadir in X direction                m                           0            0         18  SSNX
+    0-02-029    Segment size at nadir in Y direction                m                           0            0         18  SSNY
+    0-02-030    Method of current measurement                       Code table                  0            0          3  MCMS
+    0-02-031    Duration and time of current measurement            Code table                  0            0          5  DTCC
+    0-02-032    Indicator for digitization                          Code table                  0            0          2  IDGT
+    0-02-033    Method of salinity/depth measurement                Code table                  0            0          3  MSDM
+    0-02-034    Drogue type                                         Code table                  0            0          5  DROT
+    0-02-035    Cable length                                        m                           0            0          9  CALT
+    0-02-036    Buoy type                                           Code table                  0            0          2  BUYTS
+    0-02-037    Method of tidal observation                         Code table                  0            0          3  MOTO
+    0-02-038    Method of water temperature and/or salinity         Code table                  0            0          4  MSST
+                measurement
+    0-02-039    Method of wet-bulb temperature measurement          Code table                  0            0          3  MWBT
+    0-02-040    Method of removing velocity and motion of platform  Code table                  0            0          4  MRMV
+                from current
+    0-02-041    Method for estimating reports related to synoptic   Code table                  0            0          6  MESF
+                features
+    0-02-042    Indicator for sea surface current speed             Code table                  0            0          2  ISCS
+    0-02-044    Indicator for method of calculating spectral wave   Code table                  0            0          4  IMCW
+                data
+    0-02-045    Indicator for type of platform                      Code table                  0            0          4  ITOP
+    0-02-046    Wave measurement instrumentation                    Code table                  0            0          4  WMIN
+    0-02-048    Satellite sensor indicator                          Code table                  0            0          4  SSIN
+    0-02-049    Geostationary satellite data-processing technique   Flag table                  0            0          8  GSDP
+                used
+    0-02-050    Geostationary sounder satellite channels used       Flag table                  0            0         20  GSCU
+    0-02-051    Indicator to specify observing method for extreme   Code table                  0            0          4  IOET
+                temperatures
+    0-02-052    Geostationary imager satellite channels used        Flag table                  0            0          6  GICU
+    0-02-053    GOES-I/M brightness temperature characteristics     Code table                  0            0          4  GBTCST
+    0-02-054    GOES-I/M soundings parameter characteristics        Code table                  0            0          4  GSPCST
+    0-02-055    Geostationary soundings statistical parameters      Code table                  0            0          4  GSSP
+    0-02-056    Geostationary soundings accuracy statistics         Code table                  0            0          4  GSAS
+    0-02-057    Origin of first guess information for GOES-I/M      Code table                  0            0          4  OFGI
+                soundings
+    0-02-058    Valid times of first guess information for          Code table                  0            0          4  VTGG
+                GOES-I/M soundings
+    0-02-059    Origin of analysis information for GOES-I/M         Code table                  0            0          4  OANI
+                soundings
+    0-02-060    Origin of surface information for GOES-I/M          Code table                  0            0          4  OSFI
+                soundings
+    0-02-061    Aircraft navigational system                        Code table                  0            0          3  ACNS
+    0-02-062    Type of aircraft data relay system                  Code table                  0            0          4  TADR
+    0-02-063    Aircraft roll angle                                 Degree                      2       -18000         16  ROLL
+    0-02-064    Aircraft roll angle quality                         Code table                  0            0          2  ROLQ
+    0-02-065    ACARS ground receiving station                      CCITT IA5                   0            0         40  ARST
+    0-02-066    Radiosonde ground receiving system                  Code table                  0            0          6  RGRSY
+    0-02-067    Radiosonde operating frequency                      Hz                         -5            0         15  RFREQ
+    0-02-070    Original specification of latitude/longitude        Code table                  0            0          4  OSLL
+    0-02-071    Spectrographic wavelength                           m                          13            0         30  WAVL
+    0-02-072    Spectrographic width                                m                          13            0         30  WIDT
+    0-02-080    Balloon manufacturer                                Code table                  0            0          6  BMFGR
+    0-02-081    Type of balloon                                     Code table                  0            0          5  BTYPE
+    0-02-082    Weight of balloon                                   kg                          3            0         12  BWGHT
+    0-02-083    Type of balloon shelter                             Code table                  0            0          4  BSHEL
+    0-02-084    Type of gas used in balloon                         Code table                  0            0          4  BGTYP
+    0-02-085    Amount of gas used in balloon                       kg                          3            0         13  BGAMT
+    0-02-086    Balloon flight train length                         m                           1            0         10  BFTLN
+    0-02-091    Entry sensor 4/20 mA                                A                           0            4         10  ETYS
+    0-02-095    Type of pressure sensor                             Code table                  0            0          5  PSENS
+    0-02-096    Type of temperature sensor                          Code table                  0            0          5  TSENS
+    0-02-097    Type of humidity sensor                             Code table                  0            0          5  RHSENS
+    0-02-100    Radar constant                                      dB                          1            0         12  RADARC
+    0-02-101    Type of antenna                                     Code table                  0            0          4  ANTYP
+    0-02-102    Antenna height above tower base                     m                           0            0          8  ANHAT
+    0-02-103    Radome                                              Flag table                  0            0          2  RADO
+    0-02-104    Antenna polarization                                Code table                  0            0          4  ANPO
+    0-02-105    Maximum antenna gain                                dB                          0            0          6  MANG
+    0-02-106    3-dB beamwidth                                      Degree                      1            0          6  BEAMW
+    0-02-107    Sidelobe suppression                                dB                          0            0          6  SLSU
+    0-02-108    Crosspol discrimination (on axis)                   dB                          0            0          6  CPDS
+    0-02-109    Antenna speed (azimuth)                             Degree/s                    2            0         12  ANSA
+    0-02-110    Antenna speed (elevation)                           Degree/s                    2            0         12  ANSE
+    0-02-111    Radar incidence angle                               Degree                      1            0         10  RAIA
+    0-02-112    Radar look angle                                    Degree                      1            0         12  RALA
+    0-02-113    Number of azimuth looks                             Numeric                     0            0          4  NOAL
+    0-02-114    Antenna effective surface area                      m**2                        0            0         15  ANES
+    0-02-115    Type of surface observing equipment                 Code table                  0            0          5  SFEQP
+    0-02-116    Percentage of 320 MHz band processed                %                           0            0          7  P320
+    0-02-117    Percentage of 80 MHz band processed                 %                           0            0          7  P080
+    0-02-118    Percentage of 20 MHz band processed                 %                           0            0          7  P020
+    0-02-119    RA-2 instrument operations                          Code table                  0            0          3  RA2IO
+    0-02-120    Ocean wave frequency                                Hz                          3            0         10  OWFR
+    0-02-121    Mean frequency                                      Hz                         -8            0          7  MEFR
+    0-02-122    Frequency agility range                             Hz                         -6         -128          8  FRAR
+    0-02-123    Peak power                                          W                          -4            0          7  PKPW
+    0-02-124    Average power                                       W                          -1            0          7  AVPW
+    0-02-125    Pulse repetition frequency                          Hz                         -1            0          8  PRFR
+    0-02-126    Pulse width                                         s                           7            0          6  PWID
+    0-02-127    Receiver intermediate frequency                     Hz                         -6            0          7  RIFR
+    0-02-128    Intermediate frequency bandwidth                    Hz                         -5            0          6  IFRB
+    0-02-129    Minimum detectable signal                           dB                          0         -150          5  MNDS
+    0-02-130    Dynamic range                                       dB                          0            0          7  DYRG
+    0-02-131    Sensitivity time control (STC)                      Flag table                  0            0          2  STCL
+    0-02-132    Azimuth pointing accuracy                           Degree                      2            0          6  AZPA
+    0-02-133    Elevation pointing accuracy                         Degree                      2            0          6  ELPA
+    0-02-134    Antenna beam azimuth                                Degree                      2            0         16  ANAZ
+    0-02-135    Antenna elevation                                   Degree                      2        -9000         15  ANEL
+    0-02-136    Range processed by range attenuation correction     m                          -3            0         16  RPAC
+    0-02-140    Satellite radar beam azimuth angle                  Degree                      0            0          9  SRBA
+    0-02-141    Measurement type                                    CCITT IA5                   0            0         24  MTYP
+    0-02-142    Ozone instrument serial number/identification       CCITT IA5                   0            0         32  OISN
+    0-02-143    Ozone instrument type                               Code table                  0            0          7  OITP
+    0-02-144    Light source type for Brewer spectrophotometer      Code table                  0            0          4  LSTB
+    0-02-145    Wave length setting for Dobson instruments          Code table                  0            0          4  WSDI
+    0-02-146    Source conditions for Dobson instruments            Code table                  0            0          4  SCDI
+    0-02-148    Data collection and/or location system              Code table                  0            0          5  DCLS
+    0-02-149    Type of data buoy                                   Code table                  0            0          6  BUYT
+    0-02-150    TOVS/ATOVS/AVHRR instrumentation channel number     Code table                  0            0          6  INCN
+    0-02-151    Radiometer identifier                               Code table                  0            0         11  RAID
+    0-02-152    Satellite instrument used in data processing        Flag table                  0            0         31  SIDP
+    0-02-153    Satellite channel center frequency                  Hz                         -8            0         26  SCCF
+    0-02-154    Satellite channel band width                        Hz                         -8            0         26  SCBW
+    0-02-156    Percentage of valid Ku ocean retracker              %                           0            0          7  PVKORM
+                measurements
+    0-02-157    Percentage of valid S ocean retracker               %                           0            0          7  PVSORM
+                measurements
+    0-02-158    RA-2 instruments                                    Flag table                  0            0          9  RA2M
+    0-02-159    MWR instruments                                     Flag table                  0            0          8  MWRI
+    0-02-160    Wavelength of the radar                             Code table                  0            0          4  WLOR
+    0-02-163    Height assignment method                            Code table                  0            0          4  HAMD
+    0-02-164    Tracer correlation method                           Code table                  0            0          3  TCMD
+    0-02-166    Radiance type                                       Code table                  0            0          4  RDTP
+    0-02-167    Radiance computational method                       Code table                  0            0          4  RDCM
+    0-02-168    Hydrostatic pressure at lower end of cable          Pa                         -3            0         16  HPLE
+                (thermistor string)
+    0-02-169    Anemometer type                                     Code table                  0            0          4  ANTP
+    0-02-172    Product type for retrieved atmospheric gases        Code table                  0            0          8  PTAG
+    0-02-173    Square of the off-nadir angle                       Degree**2                   4            0         10  SONA
+    0-02-174    Mean across track pixel number                      Numeric                     0            0          9  MACP
+    0-02-175    Method of precipitation measurement                 Code table                  0            0          4  MOPM
+    0-02-176    Method of state of ground measurement               Code table                  0            0          4  MSGM
+    0-02-177    Method of snow depth measurement                    Code table                  0            0          4  MODM
+    0-02-178    Method of liquid content measurement of             Code table                  0            0          4  MLMP
+                precipitation
+    0-02-179    Type of sky condition algorithm                     Code table                  0            0          4  TSCA
+    0-02-180    Main present weather detecting system               Code table                  0            0          4  MPRW
+    0-02-181    Supplementary present weather sensor                Flag table                  0            0         21  SPRW
+    0-02-182    Visibility measurement system                       Code table                  0            0          4  VZMS
+    0-02-183    Cloud detection system                              Code table                  0            0          4  CLDS
+    0-02-184    Type of lightning detection sensor                  Code table                  0            0          4  TLDS
+    0-02-185    Method of evaporation measurement                   Code table                  0            0          4  MEVM
+    0-02-186    Capability to detect precipitation phenomena        Flag table                  0            0         30  CDPP
+    0-02-187    Capability to detect other weather phenomena        Flag table                  0            0         18  CDWP
+    0-02-188    Capability to detect obscuration                    Flag table                  0            0         21  CDOB
+    0-02-189    Capability to discriminate lightning strikes        Flag table                  0            0         12  CDLS
+    0-02-190    Lagrangian drifter submergence (% time submerged)   %                           0            0          7  LDRS
+    0-02-192    Detector instrument number                          Numeric                     0            0          6  DINU
+    0-02-193    Indicator for type of station operation and past/   Code table                  0            0          3  ITSO
+                present weather
+    0-02-194    Automated station type                              Code table                  0            0          4  AUTO
+    0-02-195    PREPBUFR: Instrument type                           Code table                  0            0          8  ITP
+    0-02-196    Class of profile output                             Code table                  0            0          2  CLSS
+    0-02-197    GOES-I/M soundings parameter characteristics        Flag table                  0            0          8  GSPC
+    0-02-198    GOES-I/M brightness temperature characteristics     Flag table                  0            0          8  GBTC
+    0-02-199    FSL aircraft roll angle flag                        Code table                  0            0          3  ROLF
+    0-02-200    TOVS AVHRR channel combination                      Flag table                  0            0          6  AVHC
+   [TDL --
+    0-02-200    Objective forecast technique used                   Code table                  0            0          4 ]
+    0-02-201    NESDIS satellite wind type                          Code table                  0            0          8  SWTP
+    0-02-202    USGS wind direction sensor type                     Numeric                     0            0          7  DDWD
+    0-02-203    USGS wind speed sensor type                         Numeric                     0            0          7  DDWS
+    0-02-204    USGS river stage height sensor type                 Numeric                     0            0          7  DDRS
+    0-02-205    USGS river stage discharge sensor type              Numeric                     0            0          7  DDDC
+    0-02-206    USGS river stage precipitation sensor type          Numeric                     0            0          7  DDPC
+    0-02-207    Platform type for NWS Cooperative Observer sites    Code table                  0            0          3  PLTTYP        
+    0-02-223    Satellite derived wind computation method           Code table                  0            0          8  CMCM
+    0-02-226    Cross track resolution (coarse)                     m                          -2            0         12  CTREC 
+    0-02-227    Along track resolution (coarse)                     m                          -2            0         12  ATREC
+    0-02-231    Radar incidence angle (high accuracy)               Degree                      2            0         13  RAIAH
+    0-02-232    Radar look angle (high accuracy)                    Degree                      2            0         16  RALAH

@@ -1,0 +1,76 @@
+0-01-001	Numeric	0	0	7	WMOB	WMO block number
+0-01-002	Numeric	0	0	10	WMOS	WMO station number
+0-01-003	Code table	0	0	3	WMOR	WMO Region number/geographical area
+0-01-004	Numeric	0	0	3	WMORS	WMO Region sub-area
+0-01-005	Numeric	0	0	17	BPID	Buoy/platform identifier
+0-01-006	CCITT IA5	0	0	64	ACID	Aircraft flight number
+0-01-007	Common	code table C-5	0	0	10	Satellite identifier
+0-01-008	CCITT IA5	0	0	64	ACRN	Aircraft registration (tail) number or other identification
+0-01-009	CCITT IA5	0	0	64	ACTP	Type of commercial aircraft
+0-01-010	CCITT IA5	0	0	64	SBPI	Stationary buoy platform identifier; e.g. C-MAN buoys
+0-01-011	CCITT IA5	0	0	72	SMID	Ship or mobile land station identifier
+0-01-012	Degree	true	0	0	9	Direction of motion of moving observing platform
+0-01-013	m/s	0	0	10	SMMO	Speed of motion of moving observing platform
+0-01-014	m/s	2	0	10	PLDS	Platform drift speed (high precision)
+0-01-015	CCITT IA5	0	0	160	STSN	Station or site name
+0-01-018	CCITT IA5	0	0	40	SSTN	Short station or site name
+0-01-019	CCITT IA5	0	0	256	LSTN	Long station or site name
+0-01-020	Numeric	0	0	4	WMORS4	WMO Region sub-area
+0-01-021	Numeric	0	0	14	SFID	Synoptic feature identifier
+0-01-022	CCITT IA5	0	0	160	NAOF	Name of feature
+0-01-023	Numeric	0	0	9	OSQN	Observation sequence number
+0-01-024	Code table	0	0	5	WSPDS	Wind speed source
+0-01-025	CCITT IA5	0	0	24	STMID	Storm identifier
+0-01-026	CCITT IA5	0	0	64	STMNAM	WMO storm name
+0-01-027	CCITT IA5	0	0	80	STMNAL	WMO long storm name
+0-01-028	Code table	0	0	5	AODS	Aerosol optical Depth (AOD) source
+0-01-029	Code table	0	0	5	SSIS	SSI (Surface Solar Irradiance) source
+0-01-030	CCITT IA5	0	0	128	NUMID	Numerical model identifier
+0-01-031	Common	code table C-11	0	0	16	Identification of originating/generating center
+0-01-032	Code table	defined by	0	0	8	Generating application defined by local generating center originating/generating center
+0-01-033	Common	code table C-1	0	0	8	Identification of originating/generating center
+0-01-034	code table C-12	0	0	8	GSES	Identification of originating/generating sub-center Common
+0-01-035	Common	code table C-11	0	0	16	Originating center
+0-01-036	Code table	0	0	20	AOOP	Agency in charge of operating observing platform
+0-01-037	CCITT IA5	0	0	24	SIGSI	SIGMET sequence identifier
+0-01-038	Code table	0	0	5	SSIF	Source of sea ice fraction
+0-01-041	m/s	5	-1073741824	31	PS00	Absolute platform velocity - first component
+0-01-042	m/s	5	-1073741824	31	PS90	Absolute platform velocity - second component
+0-01-043	m/s	5	-1073741824	31	PSNP	Absolute platform velocity - third component
+0-01-050	Numeric	0	0	17	PTID	Platform transmitter ID number
+0-01-051	CCITT IA5	0	0	96	PTIDC	Platform transmitter ID number
+0-01-060	CCITT IA5	0	0	64	ACRP	Aircraft reporting point (Beacon identifier)
+0-01-062	CCITT IA5	0	0	32	ICLX	Short ICAO location identifier
+0-01-063	CCITT IA5	0	0	64	ICLI	ICAO location identifier
+0-01-064	CCITT IA5	0	0	32	RWID	Runway designator
+0-01-065	CCITT IA5	0	0	256	ICRI	ICAO region identifier
+0-01-075	CCITT IA5	0	0	40	TSTI	Tide station identification
+0-01-080	CCITT IA5	0	0	32	SLNO	Ship line number according to SOOP
+0-01-081	CCITT IA5	0	0	160	RSERL	Radiosonde serial number
+0-01-082	Numeric	0	0	14	RASCN	Radiosonde ascension number
+0-01-083	Numeric	0	0	3	RRLSE	Radiosonde release number
+0-01-085	CCITT IA5	0	0	160	OPMM	Observing platform manufacturer's model
+0-01-086	CCITT IA5	0	0	256	OPMS	Observing platform manufacturer's serial number
+0-01-087	Numeric	0	0	23	WMOP	WMO Marine observing platform extended identifier
+0-01-090	Code table	0	0	8	TMIP	Technique for making up initial perturbations
+0-01-091	Numeric	0	0	10	EMNO	Ensemble member number
+0-01-092	Code table	0	0	8	TOEF	Type of ensemble forecast
+0-01-093	CCITT IA5	0	0	96	BLOTN	Balloon lot number
+0-01-094	Numeric	0	0	17	WBAN	WBAN number
+0-01-095	CCITT IA5	0	0	32	OBSVR	Observer identification
+0-01-096	CCITT IA5	0	0	160	STAQ	Station acquisition
+0-01-192	CCITT IA5	0	0	32	UAPART	Radiosonde part name
+0-01-193	Code table	0	0	4	TDMP	Direction of motion of ship during last 3 hours
+0-01-194	CCITT IA5	0	0	64	SID	PREPBUFR: Station identification
+0-01-195	Code table	0	0	8	SACO	Country/agency operating satellite
+0-01-196	CCITT IA5	0	0	16	SANA	Indicator figure for satellite name
+0-01-197	CCITT IA5	0	0	64	RSML	Radiosonde ship, drop, or mobile land station id
+0-01-198	CCITT IA5	0	0	64	RPID	Report identifier
+0-01-199	Code table	0	0	2	THRPT	Type of hourly report
+0-01-200	Code table	0	0	4	ASMP	Average speed of motion of ship during last 3 hours
+0-01-203	CCITT IA5	0	0	64	SHPC8	Ship call sign (8 characters)
+0-01-204	Code table	0	0	8	SWPR	Satellite wind producer
+0-01-205	Numeric	0	0	17	STNM	Station number (holds up to 5 digits) (Under conflict)
+0-01-208	CCITT IA5	0	0	32	GPID	IGS station identifier
+0-01-209	CCITT IA5	0	0	32	QCPRM	Name of quality control parameter
+0-01-211	Numeric	0	0	20	STNM6	Station number (holds up to 6 digits)
