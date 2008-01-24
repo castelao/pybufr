@@ -1,7 +1,7 @@
 import re
 
-filename='0_01.orig'
-filename_out='0_01.txt'
+filename='0_22.orig'
+filename_out='0_22.txt'
 
 f=open(filename)
 content=f.read()

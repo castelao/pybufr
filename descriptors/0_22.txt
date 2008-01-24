@@ -1,0 +1,117 @@
+0-22-001	Degree true	0	0	9	DOWA	Direction of waves
+0-22-002	Degree true	0	0	9	DOWW	Direction of wind waves
+0-22-003	Degree true	0	0	9	DOSW	Direction of swell waves
+0-22-004	Degree true	0	0	9	DROC	Direction of current
+0-22-005	Degree true	0	0	9	DSSC	Direction of sea surface current
+0-22-011	s	0	0	6	POWV	Period of waves
+0-22-012	s	0	0	6	POWW	Period of wind waves
+0-22-013	s	0	0	6	POSW	Period of swell waves
+0-22-021	m	1	0	10	HOWV	Height of waves
+0-22-022	m	1	0	10	HOWW	Height of wind waves
+0-22-023	m	1	0	10	HOSW	Height of swell waves
+0-22-025	m	2	0	10	SDWH0	Standard deviation wave height
+0-22-026	m	2	0	10	SDWH	Standard deviation of significant wave height
+0-22-031	m/s	2	0	13	SPOC	Speed of current
+0-22-032	m/s	2	0	13	SSSC	Speed of sea surface current
+0-22-035	m	2	0	14	TERCX	Tidal elevation with respect to local chart datum
+0-22-036	m	2	0	14	MRTEX	Meteorological residual tidal elevation (surge or offset)
+0-22-037	m	3	-10000	15	TERL	Tidal elevation with respect to national land datum
+0-22-038	m	3	-10000	15	TERC	Tidal elevation with respect to local chart datum
+0-22-039	m	3	-5000	12	MRTE	Meteorological residual tidal elevation (surge or offset)
+0-22-040	m	3	-5000	14	TIDER	Meteorological residual tidal elevation (surge or offset)
+0-22-041	K	1	0	12	SST15	Sea-surface temperature (15-day running mean)
+0-22-042	K	1	0	12	SSTL	Sea/water temperature
+0-22-043	K	2	0	15	SST1	Sea/water temperature
+0-22-044	m/s	1	0	14	SVEL	Sound velocity
+0-22-045	K	3	0	19	SSTH	Sea/water temperature
+0-22-046	Numeric	2	0	7	SIFR	Sea ice fraction
+0-22-049	K	2	0	15	SST0	Sea surface temperature
+0-22-050	K	2	0	8	SSTD	Standard deviation sea-surface temperature
+0-22-055	Numeric	0	0	10	FCYN	Float cycle number
+0-22-056	Code table	0	0	2	DIPR	Direction of profile
+0-22-059	Part per thousand	2	0	14	SSS0	Sea surface salinity
+0-22-060	Code table	0	0	3	LDDS	Lagrangian drifter drogue status
+0-22-061	Code table	0	0	4	SEST	State of the sea
+0-22-062	Part per thousand	2	0	14	SALN	Salinity
+0-22-063	m	0	0	14	TOWD	Total water depth
+0-22-064	Part per thousand	3	0	17	SALNH	Salinity
+0-22-065	Pa	-3	0	17	WPRS	Water pressure
+0-22-066	S/m	6	0	26	WCON	Water conductivity
+0-22-067	Common code table C-3	0	0	10	IWTEMP	Instrument type for water temperature profile measurement
+0-22-068	Common code table C-4	0	0	7	WTEMPR	Water temperature profile recorder types
+0-22-069	m**2/Hz	3	0	22	SWDE	Spectral wave density
+0-22-070	m	2	0	13	SGWH	Significant wave height
+0-22-071	s	1	0	9	SPWP	Spectral peak wave period
+0-22-072	m	0	0	13	SPWL	Spectral peak wave length
+0-22-073	m	2	0	13	MXWH	Maximum wave height
+0-22-074	s	1	0	9	AVWP	Average wave period
+0-22-075	m	0	0	13	AVWL	Average wave length
+0-22-076	Degree true	0	0	9	DDWC	Direction from which dominant waves are coming
+0-22-077	Degree	0	0	9	DSDW	Directional spread of dominant wave
+0-22-078	s	0	0	12	DOWR	Duration of wave record
+0-22-079	m	0	0	16	LOWR	Length of wave record
+0-22-080	Hz	3	0	10	WCFR	Waveband central frequency
+0-22-081	m**-1	5	0	13	WCWN	Waveband central wave number
+0-22-082	m**2 s	2	0	20	MXSWD	Maximum non-directional spectral wave density
+0-22-083	m**3	2	0	20	MXSWN	Maximum non-directional spectral wave number
+0-22-084	Numeric	0	0	7	BMXSWD	Band containing maximum non-directional spectral wave density
+0-22-085	Numeric	0	0	7	SWDR	Spectral wave density ratio
+0-22-086	Degree true	0	0	9	MDWC	Mean direction from which waves are coming
+0-22-087	Degree true	0	0	9	PDWC	Principal direction from which waves are coming
+0-22-088	Numeric	2	0	7	FNPF	First normalized polar coordinate from Fourier coefficients
+0-22-089	Numeric	2	0	7	SNPF	Second normalized polar coordinate from Fourier coefficients
+0-22-090	m**2 s	2	0	20	NSWF	Non-directional spectral estimate by wave frequency
+0-22-091	m**3	2	0	20	NSWN	Non-directional spectral estimate by wave number
+0-22-092	m**2 rad**-1 s	2	0	20	DSWF	Directional spectral estimate by wave frequency
+0-22-093	m**4	2	0	20	DSWN	Directional spectral estimate by wave number
+0-22-094	Numeric	0	0	7	TNWB	Total number of wave bands
+0-22-095	Degree	0	0	8	DSIW	Directional spread of individual waves
+0-22-096	s**-1	3	0	4	SBWD	Spectral band width
+0-22-097	m	0	0	14	MWLW	Mean wavelength > 731 m of image spectrum at low wave numbers
+0-22-098	m	0	0	14	WSLW	Wavelength spread (wavelength > 731 m) at low wave numbers
+0-22-099	Degree true	0	0	9	MDLW	Mean direction at low wave numbers (wavelength > 731 m)
+0-22-100	Degree	0	0	9	DSLW	Direction spread at low wave numbers (wavelength > 731 m)
+0-22-101	Numeric	0	0	31	TELW	Total energy (wavelength > 731 m) at low wave numbers
+0-22-120	Code table	0	0	5	AWCK	Tide station automated water level check
+0-22-121	Code table	0	0	5	MWCK	Tide station manual water level check
+0-22-122	Code table	0	0	5	AMCK	Tide station automated meteorological data check
+0-22-123	Code table	0	0	5	MMCK	Tide station manual meteorological data check
+0-22-141	K	2	0	15	SST15H	Sea-surface temperature (15-day running mean)
+0-22-150	Numeric	0	0	10	NVPK	Number of 18 Hz valid points for Ku band
+0-22-151	m	3	0	31	KBOR	Ku band ocean range
+0-22-152	m	3	0	16	SKBOR	STD of 18 Hz Ku band ocean range
+0-22-153	Numeric	0	0	10	NVPS	Number of 18 Hz valid points for S band
+0-22-154	m	3	0	31	SBOR	S band ocean range
+0-22-155	m	3	0	16	SSBOR	STD of 18 Hz S band ocean range
+0-22-156	m	3	0	16	KBSW	Ku band significant wave height
+0-22-157	m	3	0	16	SKBSW	STD of 18 Hz Ku band ocean range
+0-22-158	m	3	0	16	SBSW	S band significant wave height
+0-22-159	m	3	0	16	SSBSW	STD of 18 Hz S band significant wave height
+0-22-160	Numeric	6	0	21	NIWA	Normalized inverse wave age
+0-22-161	m**4	4	0	27	WASP	Wave spectra
+0-22-193	K	2	0	15	STMP	Sea temperature at specified depth
+0-22-194	Code table	0	0	4	AVGPER	Averaging period for TRACKOB parameters
+0-22-196	Code table	0	0	2	IUCSPD	Indicator for units of sea-surface current speed
+0-22-197	m	4	-30000	16	SLHD	Sea-level height deviation from 3-year mean of 1993-1995
+0-22-198	Numeric	0	0	6	NSLR	Number of altimeter records averaged to obtain sea-level height deviation from 3-year mean of 1993-1995
+0-22-199	m	6	-4200000	23	SLHD1	Sea-level height deviation from 8-year mean of 1993-2000
+0-22-211	Second	0	0	31	NPBT	NGDR satellite pass time
+0-22-212	Numeric	0	0	32	SACLYN	NGDR satellite cycle number
+0-22-214	m	3	-1000000	24	SSHC	NGDR SSH corrected
+0-22-216	dB	2	0	12	NSIG	NGDR sigma-0
+0-22-217	m	3	-500	12	NINB	NGDR inverse barometer
+0-22-218	m	3	-1500000	22	NGEO	NGDR geiod height
+0-22-219	m	3	-1500000	22	NMSI	NGDR mean sea surface I
+0-22-220	m	3	-1500000	22	NMS2	NGDR mean sea surface II
+0-22-222	m	2	-16767	17	NSWHC	NGDR net SHW corrected
+0-22-224	K	2	0	15	TMBR22	NGDR brightness temperature at 22GHz
+0-22-225	K	2	0	15	TMBR37	NGDR brightness temperature at 37GHz
+0-22-226	m	3	-9999	15	TLLW	Tide elevation with respect to mean lower low water
+0-22-227	Numeric	0	0	15	IREL	Reliability of sea-surface temperature retrieval (higher number means more reliable)
+0-22-228	K	0	0	15	IRMS	Internal RMS error of sea-surface temperature retrieval
+0-22-246	Code table	0	0	5	SSTQM	PREPBUFR: Sea temperature (quality) marker
+0-22-247	Code table	0	0	5	SSTPC	PREPBUFR: Sea temperature event program code
+0-22-248	Code table	0	0	10	SSTRC	PREPBUFR: Sea temperature event reason code
+0-22-249	K	2	0	15	SSTFC	PREPBUFR: Global forecast (background) sea temperature value sea temperature value
+0-22-250	K	1	0	10	SSTOE	PREPBUFR: Sea temperature observation error
+0-22-251	K	2	0	15	SSTAN	PREPBUFR: Analyzed sea temperature value
