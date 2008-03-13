@@ -25,8 +25,8 @@ class section0(IterableUserDict):
 ##############################################################################
 #### SECTION 1
 ##############################################################################
-class section1v4(IterableUserDict):
-    """A class to read the section 1 of a BUFR file version 4
+class section1v3(IterableUserDict):
+    """A class to read the section 1 of a BUFR file version 3
     """
     def __init__(self,f):
         """
@@ -47,8 +47,8 @@ class section1v4(IterableUserDict):
         self.data['localsubcategory'] = _unpack_int(self.f.read(1))   # 13
         self.data['mastertableversion'] = _unpack_int(self.f.read(1)) # 14
         self.data['localtableversion'] = _unpack_int(self.f.read(1))  # 15
-        self.data['year'] = _unpack_int(self.f.read(2))            # 16
-        self.data['month'] = _unpack_int(self.f.read(1))          # 17-18
+        self.data['year'] = _unpack_int(self.f.read(2))            # 16-17
+        self.data['month'] = _unpack_int(self.f.read(1))          # 18
         self.data['day'] = _unpack_int(self.f.read(1))               # 19
         self.data['hour'] = _unpack_int(self.f.read(1))              # 20
         self.data['minute'] = _unpack_int(self.f.read(1))            # 21
@@ -58,6 +58,57 @@ class section1v4(IterableUserDict):
 ##############################################################################
 #### Descriptor tables
 ##############################################################################
+
+class descriptorlevel2(IterableUserDict):
+    """
+    """
+    def __init__(self,F,path='./descriptors'):
+        """
+        """
+        self.F = F
+        print "bunda"
+        print path
+        self.path = path
+        self.data={}
+        return
+    def __getitem__(self, key):
+        if key not in self.keys():
+            print "%s not in keys(). Loading it." % key
+            import string
+            import os
+            print F,X
+            filename = "%s_%s.txt" % (F,string.zfill(X,2))
+            print self.path
+            file = os.path.join(self.path,filename)
+            self._readdescriptor(file)
+        return self.data[key]
+    def _readdescriptor(self,file):
+        """
+        """
+        print "Loading the file: %s" % file
+        f=open(file)
+        for line in f:
+            print line
+            fields = line.split('\t')
+            #fields=[line[1:7],line[8:72].strip(),line[73:98].strip(),int(line[98:101]),int(line[102:114]),int(line[115:118])]
+            F=int(fields[0][0:1])
+            X=int(fields[0][2:4])
+            Y=int(fields[0][5:8])
+            print F,X,Y
+            if F != self.F:
+                print "Trying to load an X level descritor at a wrong F section"
+                return
+            if X not in self.data:
+                self.data[X]={}
+            if F == 0:
+                #if Y not in descriptors[F][X]:
+                #    descriptors[F][X]={}
+                self.data[X][Y] = {'name':fields[1],'unit':fields[2],'scale':fields[3],'reference':fields[4],'bitwidth':fields[5]}
+            elif F == 3:
+                print "F==3"
+                print fields[1]
+                self.data[X][Y] = [[int(d[0]),int(d[2:4]),int(d[5:8])] for d in fields[1][:-1].split(' ')]              
+        return
 
 class descriptorstable(IterableUserDict):
     """
@@ -72,10 +123,15 @@ class descriptorstable(IterableUserDict):
          few of them, or none.
     """
     def __init__(self):
+        self.data={}
+        self[0]=descriptorlevel2(0)
+        self[3]=descriptorlevel2(3)
         return
+
 
 def readdescriptor(filename):
     """
+        DEPRECATED
 
         !!!ATENTION!!!
         Keep in mind to be able to define the table versions and load specific tables on demand. Maybe it should read the main tables on the start (not sure if not on demand too), but probably load the specific tables only on demand. The idea is that when request certain table from the function or class, if it's not loaded, go and load only that.
@@ -103,6 +159,7 @@ def readdescriptor(filename):
         descriptors[3][1][12] = [[0,4,4],[0,4,5]]
         descriptors[3][1][23] = [[0,5,2],[0,6,2]]
         descriptors[3][1][25] = [[3,1,23],[0,4,3],[3,1,12]]
+        descriptors[3][15][3] =[[0,1,3][0,1,20][0,1,5][0,1,85][0,1,86][0,2,36][0,2,149][3,1,11][3,1,12][3,1,21][0,7,30][0,2,40][0,22,67][0,22,68][1,2,4][0,8,80][0,33,50][0,8,80][0,33,50][0,8,80][0,33,50][0,8,80][0,33,50][0,22,55][0,22,56][0,22,63][3,2,21][0,2,32][0,2,33][1,3,0][0,31,1][0,7,62][0,22,45][0,22,64][0,2,30][3,6,5]]
 
     return descriptors
 ##############################################################################
