@@ -27,6 +27,45 @@ class section0(IterableUserDict):
 ##############################################################################
 class section1v3(IterableUserDict):
     """A class to read the section 1 of a BUFR file version 3
+
+       Updated following the description on 
+         http://www.wmo.int/pages/prog/www/WMOCodes/Operational/BUFR/FM94REG-11-2007.pdf
+         , which don't agree with the previous reference that I used.
+    """
+    def __init__(self,f):
+        """
+        """
+        self.f = f
+        self.data={}
+        self.read()
+        return
+    def read(self):
+        self.data['sec1size'] = _unpack_int(self.f.read(3))        # 1-3
+        self.data['mastertablenumber'] = _unpack_int(self.f.read(1))   # 4
+        self.data['originatedsubcenter'] = _unpack_int(self.f.read(1))        # 5
+        self.data['originatedcenter'] = _unpack_int(self.f.read(1))    # 6
+        self.data['updateversion'] = _unpack_int(self.f.read(1))  # 7
+        self.data['optionalsec'] = _unpack_int(self.f.read(1))    # 8    Atention here!!!
+        self.data['datacategory'] = _unpack_int(self.f.read(1))   # 9 (Table A)
+        self.data['datasubcategory'] = _unpack_int(self.f.read(1)) # 10
+        #self.data['localsubcategory'] = _unpack_int(self.f.read(1))   #
+        self.data['mastertableversion'] = _unpack_int(self.f.read(1)) # 11
+        self.data['localtableversion'] = _unpack_int(self.f.read(1))  # 12
+        # ====================================================================
+        year = _unpack_int(self.f.read(1))            # 13
+        if year==100: year=0
+        self.data['year'] = 2000+year
+        # ====================================================================
+        self.data['month'] = _unpack_int(self.f.read(1))          # 14
+        self.data['day'] = _unpack_int(self.f.read(1))               # 15
+        self.data['hour'] = _unpack_int(self.f.read(1))              # 16
+        self.data['minute'] = _unpack_int(self.f.read(1))            # 17
+        n_reserved = self.data['sec1size'] - 17
+        self.data['localuse'] = _unpack_int(self.f.read(n_reserved)) # 18-
+        return
+
+class section1v4(IterableUserDict):
+    """A class to read the section 1 of a BUFR file version 4
     """
     def __init__(self,f):
         """
@@ -42,7 +81,7 @@ class section1v3(IterableUserDict):
         self.data['originatedsubcenter'] = _unpack_int(self.f.read(2))        # 7-8
         self.data['updateversion'] = _unpack_int(self.f.read(1))  # 9
         self.data['optionalsec'] = _unpack_int(self.f.read(1))    # 10    Atention here!!!
-        self.data['datacategory'] = _unpack_int(self.f.read(1))   # 11
+        self.data['datacategory'] = _unpack_int(self.f.read(1))   # 11 (Table A)
         self.data['datasubcategory'] = _unpack_int(self.f.read(1))    # 12
         self.data['localsubcategory'] = _unpack_int(self.f.read(1))   # 13
         self.data['mastertableversion'] = _unpack_int(self.f.read(1)) # 14
@@ -53,66 +92,18 @@ class section1v3(IterableUserDict):
         self.data['hour'] = _unpack_int(self.f.read(1))              # 20
         self.data['minute'] = _unpack_int(self.f.read(1))            # 21
         self.data['second'] = _unpack_int(self.f.read(1))            # 22
+        n_missing=self.data['sec1size']-22
+        if n_missing>0:
+            self.data['localuse'] = self.f.read(n_missing)
         return
 
 ##############################################################################
 #### Descriptor tables
 ##############################################################################
 
-class descriptorlevel2(IterableUserDict):
-    """
-    """
-    def __init__(self,F,path='./descriptors'):
-        """
-        """
-        self.F = F
-        print "bunda"
-        print path
-        self.path = path
-        self.data={}
-        return
-    def __getitem__(self, key):
-        if key not in self.keys():
-            print "%s not in keys(). Loading it." % key
-            import string
-            import os
-            print F,X
-            filename = "%s_%s.txt" % (F,string.zfill(X,2))
-            print self.path
-            file = os.path.join(self.path,filename)
-            self._readdescriptor(file)
-        return self.data[key]
-    def _readdescriptor(self,file):
-        """
-        """
-        print "Loading the file: %s" % file
-        f=open(file)
-        for line in f:
-            print line
-            fields = line.split('\t')
-            #fields=[line[1:7],line[8:72].strip(),line[73:98].strip(),int(line[98:101]),int(line[102:114]),int(line[115:118])]
-            F=int(fields[0][0:1])
-            X=int(fields[0][2:4])
-            Y=int(fields[0][5:8])
-            print F,X,Y
-            if F != self.F:
-                print "Trying to load an X level descritor at a wrong F section"
-                return
-            if X not in self.data:
-                self.data[X]={}
-            if F == 0:
-                #if Y not in descriptors[F][X]:
-                #    descriptors[F][X]={}
-                self.data[X][Y] = {'name':fields[1],'unit':fields[2],'scale':fields[3],'reference':fields[4],'bitwidth':fields[5]}
-            elif F == 3:
-                print "F==3"
-                print fields[1]
-                self.data[X][Y] = [[int(d[0]),int(d[2:4]),int(d[5:8])] for d in fields[1][:-1].split(' ')]              
-        return
 
 class descriptorstable(IterableUserDict):
     """
-
         This class should return the descriptor definitions on demand.
 
         The basic tables should be readed from the start, when it's loaded,
@@ -121,47 +112,57 @@ class descriptorstable(IterableUserDict):
 
         Maybe the auto initially loaded tables should be reduced to really
          few of them, or none.
+
+        !!!ATENTION!!! Work on error parser messages. Should show when a 
+           descriptor is not available, like (3,15,99).
     """
-    def __init__(self):
-        self.data={}
-        self[0]=descriptorlevel2(0)
-        self[3]=descriptorlevel2(3)
+    def __init__(self,path='./descriptors'):
+        """
+        """
+        self.path=path
+        self.data={0:{},1:{},2:{},3:{}}
+        return
+    def __getitem__(self, key):
+        if len(key)==2:
+            F,X = key
+            return self.data[F][X]
+        F,X,Y = key
+        #print 'here',F,X,Y
+        if X not in self.data[F]:
+            self._readdescriptor(F,X)
+        return self.data[F][X][Y]
+    def _readdescriptor(self,F,X):
+        """
+        """
+        import string
+        import os
+        import re
+        filename = os.path.join(self.path,"%s_%s.txt" % (F,string.zfill(X,2)))
+        print "Loading the file: %s" % filename
+        f=open(filename)
+        for line in f:
+            #print line
+            #fields = line.split('\t')
+            fields = (re.sub('\n','',line)).split('\t')
+            #fields=[line[1:7],line[8:72].strip(),line[73:98].strip(),int(line[98:101]),int(line[102:114]),int(line[115:118])]
+            F=int(fields[0][0:1])
+            X=int(fields[0][2:4])
+            Y=int(fields[0][5:8])
+            #print F,X,Y
+            if X not in self.data[F]:
+                self.data[F][X]={}
+            if F == 0:
+                #if Y not in descriptors[F][X]:
+                #    descriptors[F][X]={}
+                self.data[F][X][Y] = {'name':fields[1],'unit':fields[2],'scale':fields[3],'reference':fields[4],'bitwidth':fields[5]}
+            elif F == 3:
+                # Temporary ugly solution
+                if re.search("[ABCD]",fields[2]):
+                    self.data[F][X][Y] = {'description':fields[1],'fields':[[d[0],int(d[2:4]),int(d[5:8])] for d in fields[2][:-1].split(' ')],'mnemonic':fields[3]}
+                else:
+                    self.data[F][X][Y] = {'description':fields[1],'fields':[[int(d[0]),int(d[2:4]),int(d[5:8])] for d in fields[2][:-1].split(' ')],'mnemonic':fields[3]}
         return
 
-
-def readdescriptor(filename):
-    """
-        DEPRECATED
-
-        !!!ATENTION!!!
-        Keep in mind to be able to define the table versions and load specific tables on demand. Maybe it should read the main tables on the start (not sure if not on demand too), but probably load the specific tables only on demand. The idea is that when request certain table from the function or class, if it's not loaded, go and load only that.
-    """
-    descriptors={}
-    f=open(filename)
-    for line in f:
-        #fields = line.split('\t')
-        fields=[line[1:7],line[8:72].strip(),line[73:98].strip(),int(line[98:101]),int(line[102:114]),int(line[115:118])]
-        F=int(fields[0][0:1])
-        X=int(fields[0][1:3])
-        Y=int(fields[0][3:6])
-        if F not in descriptors:
-            descriptors[F]={}
-        if X not in descriptors[F]:
-            descriptors[F][X]={}
-        #if Y not in descriptors[F][X]:
-        #    descriptors[F][X]={}
-        descriptors[F][X][Y] = {'name':fields[1],'unit':fields[2],'scale':fields[3],'reference':fields[4],'bitwidth':fields[5]}
-
-        descriptors[3]={}
-        descriptors[3][1]={}
-        descriptors[3][1][1] = [[0,1,1],[0,1,2]]
-        descriptors[3][1][11] = [[0,4,1],[0,4,2],[0,4,3]]
-        descriptors[3][1][12] = [[0,4,4],[0,4,5]]
-        descriptors[3][1][23] = [[0,5,2],[0,6,2]]
-        descriptors[3][1][25] = [[3,1,23],[0,4,3],[3,1,12]]
-        descriptors[3][15][3] =[[0,1,3][0,1,20][0,1,5][0,1,85][0,1,86][0,2,36][0,2,149][3,1,11][3,1,12][3,1,21][0,7,30][0,2,40][0,22,67][0,22,68][1,2,4][0,8,80][0,33,50][0,8,80][0,33,50][0,8,80][0,33,50][0,8,80][0,33,50][0,22,55][0,22,56][0,22,63][3,2,21][0,2,32][0,2,33][1,3,0][0,31,1][0,7,62][0,22,45][0,22,64][0,2,30][3,6,5]]
-
-    return descriptors
 ##############################################################################
 #### Unreviewed
 ##############################################################################
