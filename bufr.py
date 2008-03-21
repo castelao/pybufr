@@ -157,7 +157,11 @@ class DescriptorsTable(IterableUserDict):
                 #if Y not in descriptors[F][X]:
                 #    descriptors[F][X]={}
                 #self.data[F][X][Y] = {'mnemonic':fields[4],'unit':fields[5],'scale':fields[1],'reference':fields[2],'bitwidth':fields[3]}
-                self.data[F][X][Y] = {'descriptor':fields[0],'scale':fields[1],'reference':fields[2],'bitwidth':fields[3],'mnemonic':fields[4],'unit':fields[5],'description':fields[6]}
+                try:
+                    #self.data[F][X][Y] = {'descriptor':fields[0],'scale':int(fields[1]),'reference':fields[2],'bitwidth':int(fields[3]),'mnemonic':fields[4],'unit':fields[5],'description':fields[6]}
+                    self.data[F][X][Y] = {'descriptor':fields[0],'scale':fields[1],'reference':int(fields[2]),'bitwidth':int(fields[3]),'mnemonic':fields[4],'unit':fields[5],'description':fields[6]}
+                except:
+                    print "Not able to load: ",fields
             elif F == 3:
                 # Temporary ugly solution
                 if re.search("[ABCD]",fields[2]):
@@ -171,13 +175,14 @@ class DescriptorsTable(IterableUserDict):
 ##############################################################################
 from UserDict import UserDict
 from UserDict import IterableUserDict
+from UserList import UserList
+
 
 descriptorstable = DescriptorsTable()
 
 #filename = './data/wmo_sarep.bufr'
 #f=open(filename,'r')
 #lixo=f.read(30)
-
 
 # Looks like a good first approach, but still needs:
 #    - Think about an array index. I believe is the best way to reference were to store the output data
@@ -186,19 +191,9 @@ descriptorstable = DescriptorsTable()
 
 #import itertools
 
-
-#class level0(UserList):
-#    def __init__(self):
-#        UserList.__init__(self)
-#   return
-
 class Descriptor0(UserDict):
-    #def __init__(self,data):
     def __init__(self,F,X,Y):
-        self.F=F
-        self.X=X
-        self.Y=Y
-        #self.data=globals()['descriptorstable'][F][X][Y]
+        self.F, self.X, self.Y = F,X,Y
         self.data=globals()['descriptorstable'][F,X,Y]
         self.showed=False
         self.repetitions=1
@@ -214,33 +209,22 @@ class Descriptor0(UserDict):
     def reset(self):
         self.showed=False
         return
-#class WalkingList(UserList):
-#    #def __init__(self):
-#    def __init__(self,data=None):
-#        UserList.__init__(self)
-#   if data!=None:
-#            self.data=data
-#   self.i=-1
-#   print "Merda: i",self.i
-#   return
-#    def walk(self):
-#        self.i+=1
-#   if self.i<len(self):
-#       return self.data[self.i]
-#   return 
-
 
 class Descriptors(UserList):
-    def __init__(self,F=None,X=None,Y=None):
-    #def __init__(self):
+    #def __init__(self,F=None,X=None,Y=None,pos=[0]):
+    #def __init__(self,F=None,X=None,Y=None):
+    def __init__(self,F=None,X=None,Y=None,level=[]):
         UserList.__init__(self)
-        #self.data=WalkingList()
         self.i=0
         self.repetitions=1
         self.n=0
         if (F != None) & (X != None) & (Y != None):
             self.append(F,X,Y)
         self.dataind=-1
+        import copy
+        self.level = copy.copy(level)
+        self.level.append(-1)
+        print "Level: ",self.level
         return
     def load(self,descriptorslist):
         """
@@ -248,20 +232,20 @@ class Descriptors(UserList):
         i=0
         while i<len(descriptorslist):
             F,X,Y = descriptorslist[i]
-            #print "Processing: %s, %s, %s" % (F,X,Y)
-            #print F,X,Y,(globals()['descriptorstable'][F][X][Y])
+            print "Processing: %s, %s, %s" % (F,X,Y)
+            self.level[-1]+=1
             if (F==0):
+                print F,X,Y
                 self.data.append(Descriptor0(F,X,Y))
                 self.dataind+=1
-                #print "self.dataind: ",self.dataind
                 self.data[-1]['index']=self.dataind
-                #print self.data[-1]
+                import copy
+                self.data[-1].level=copy.copy(self.level)
+                print "Level: ",self.data[-1].level
             elif (F==1):
-                tmp=Descriptors()
+                tmp=Descriptors(level=self.level)
                 tmp.dataind=self.dataind
-                tmp.F=F
-                tmp.X=X
-                tmp.Y=Y
+                tmp.F,tmp.X,tmp.Y = F,X,Y
                 if tmp.Y>0:
                     sublist=descriptorslist[i+1:i+1+X]
                     tmp.repetitions=Y
@@ -269,6 +253,7 @@ class Descriptors(UserList):
                 elif tmp.Y==0:
                     sublist=descriptorslist[i+2:i+2+X]
                     tmp.repfactor=Descriptor0(descriptorslist[i+1][0],descriptorslist[i+1][1],descriptorslist[i+1][2])
+                    tmp.repfactor.level=copy.copy(self.level)
                     tmp.repetitions=None
                     i+=1+X
                 for f,x,y in sublist:
@@ -280,34 +265,29 @@ class Descriptors(UserList):
                 self.dataind=tmp.dataind
                 self.data.append(tmp)
             elif (F==3):
-                tmp=Descriptors()
+                #tmp=Descriptors()
+                #import copy
+                #level=copy.copy(self.level)
+                #level.append(-1)
+                #tmp=Descriptors(level=level)
+                tmp=Descriptors(level=self.level)
+                #tmp.level+=1
                 tmp.dataind=self.dataind
-                tmp.F=F
-                tmp.X=X
-                tmp.Y=Y
+                tmp.F,tmp.X,tmp.Y = F,X,Y
                 tmp.load(globals()['descriptorstable'][F,X,Y]['fields'])
                 self.dataind=tmp.dataind
                 self.data.append(tmp)
             i+=1
         return
     def walk(self):
-        #print "self.i: %s" % (self.i)
         output=self.data[self.i].walk()
-        #print "output:",output
-        #print "i:",i
         if (output == None):
-            #print "i: %s, len(data): %s" % (self.i,len(self.data))
             if self.i<(len(self.data)-1):
                 self.i+=1
-                #self.n+=1
                 if (self.data[self.i].F == 1) & (self.data[self.i].Y == 0) & ((self.data[self.i].n == 0)):
                     output = self.data[self.i].repfactor
                 else:
                     output=self.data[self.i].walk()
-            #if self.n<self.repetitions:
-            #    self.i=0
-            #if (self.i<len(self.data)):
-            #    output=self.data[self.i].walk()
             else:
                 self.n+=1
                 if (self.n<self.repetitions):
@@ -315,16 +295,15 @@ class Descriptors(UserList):
                     output=self.data[self.i].walk()
                 else:
                     output=None
-        #else:
-        #    #self.i+=1
-        #    #print "I'm out"
         return output
     def reset(self):
         """ Reset the counter
         """
-        self.data[self.i].reset()
+        for i in range(len(self.data)):
+            self.data[i].reset()
         self.i=0
         return
+
 #a=Descriptors()
 #a.load(descriptorslist)
 
@@ -441,14 +420,14 @@ class section3(IterableUserDict):
         self.read()
         return
     def read(self):
-        self.data[3]={}
-        self.data[3]['sec3size'] = safe_unpack('>i',self.f.read(3))
-        self.data[3]['reserved'] = safe_unpack('>i', self.f.read(1))
-        self.data[3]['nsubsets'] = safe_unpack('>i', self.f.read(2))
-        self.data[3]['xxxx'] = safe_unpack('>i', self.f.read(1))
+        self.data={}
+        self.data['sec3size'] = safe_unpack('>i',self.f.read(3))
+        self.data['reserved'] = safe_unpack('>i', self.f.read(1))
+        self.data['nsubsets'] = safe_unpack('>i', self.f.read(2))
+        self.data['xxxx'] = safe_unpack('>i', self.f.read(1))
 
-        n_descriptors = (self.data[3]['sec3size']-7)/2
-        self.data[3]['descriptors']=Descriptors()
+        n_descriptors = (self.data['sec3size']-7)/2
+        self.data['descriptors']=Descriptors()
         tmp=[]
         for i in range(n_descriptors):
             FX = safe_unpack('>i', self.f.read(1))
@@ -462,10 +441,10 @@ class section3(IterableUserDict):
             #if F == 0:
             #    print descriptorstable[F][X][Y]
 
-            #Read the rest of the section non used bytes. Should be 0 or 1 bytes.
-            trash=self.f.read((self.data[3]['sec3size']-7)%2)
-
-            self.data[3]['descriptors'].load(tmp)
+        #Read the rest of the section non used bytes. Should be 0 or 1 bytes.
+        trash=self.f.read((self.data['sec3size']-7)%2)
+        print tmp
+        self.data['descriptors'].load(tmp)
         return
 ##############################################################################
 #### Unreviewed
@@ -688,8 +667,15 @@ def datatype(unit):
      'SECOND':'int',
      'DEGREE':'int',
      'CCITTIA5':'str',
+     'CCITT IA5':'str',
+     'M/S':'int',
+     'Numeric':'int',
+     'Degree (North +, South -)':'int',
+     'Degree (East +, West -)':'int',
      }
     if unit in datatypes.keys():
         return datatypes[unit]
     else:
         return unit
+
+
